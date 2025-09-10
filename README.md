@@ -1,6 +1,6 @@
 # MeltForge
 
-**Meltforge** is a universal, plugin-based converter for video, audio, and images.  
+**Meltforge** is a universal, plugin-based converter for video, audio, images and more.  
 It’s **fast**, **extensible**, and **open source** – built with Rust and Slint.
 
 >  Drop in your media -> Melt it down ->  Forge it into any format you need.
