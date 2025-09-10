@@ -5,8 +5,6 @@ It’s **fast**, **extensible**, and **open source** – built with Rust and Sli
 
 >  Drop in your media -> Melt it down ->  Forge it into any format you need.
 
----
-
 ##  Elevator Pitch
 
 Meltforge is the **last converter you’ll ever need**.  
@@ -18,5 +16,3 @@ It’s designed to be **lightweight by default** and **extendible on demand**:
 - Add more power with plugins – Meltforge is designed to grow with you.
 
 **One tool, endless conversions.**
-
----
