@@ -3,9 +3,9 @@
 **Meltforge** is a universal, plugin-based converter for video, audio, images and more.  
 It’s **fast**, **extensible**, and **open source** – built with Rust and Slint.
 
->  Drop in your media -> Melt it down ->  Forge it into any format you need.
+> Drop in your media -> Melt it down -> Forge it into any format you need.
 
-##  Elevator Pitch
+## Elevator Pitch
 
 Meltforge is the **last converter you’ll ever need**.  
 It’s designed to be **lightweight by default** and **extendible on demand**:
@@ -21,173 +21,210 @@ Alright Bro – hier kriegst du die komplette Ladung: **alle User Stories**, sch
 
 # **Meltforge – User Stories & Priorities**
 
-
 ## **Priority 0 (Core – must exist before anything else)**
 
 ### 1. CLI Conversion (Single File)
 
-* **Story:**
-  *As a power user, I want to run `meltforge convert input.mp4 --to mp3`, so that I can convert media fast from the terminal.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a power user, I want to run `meltforge convert input.mp4 --to mp3`, so that I can convert media fast from the terminal._
+- **Acceptance Criteria:**
 
-  * CLI accepts input file and `--to` flag.
-  * Conversion runs successfully and outputs target file.
-  * Errors (unsupported format, missing file) are clear and exit with non-zero code.
+  - CLI accepts input file and `--to` flag.
+  - Conversion runs successfully and outputs target file.
+  - Errors (unsupported format, missing file) are clear and exit with non-zero code.
 
 ### 2. Core without UI (Lightweight Base)
 
-* **Story:**
-  *As a user, I want Meltforge core to run without UI, so that the default install is lightweight.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a user, I want Meltforge core to run without UI, so that the default install is lightweight._
+- **Acceptance Criteria:**
 
-  * Meltforge builds and runs as CLI only.
-  * No Slint/UI dependencies included in minimal build.
-  * CLI binary works standalone.
+  - Meltforge builds and runs as CLI only.
+  - No Slint/UI dependencies included in minimal build.
+  - CLI binary works standalone.
 
 ### 3. Plugin Runtime (Discovery & Loading)
 
-* **Story:**
-  *As a user, I want Meltforge to auto-load plugins from a `plugins/` folder, so that I only use what’s installed.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a user, I want Meltforge to auto-load plugins from a `plugins/` folder, so that I only use what’s installed._
+- **Acceptance Criteria:**
 
-  * `plugins/` folder is scanned at startup.
-  * Compatible plugins are loaded automatically.
-  * If a plugin is broken, Meltforge fails gracefully with a clear error.
+  - `plugins/` folder is scanned at startup.
+  - Compatible plugins are loaded automatically.
+  - If a plugin is broken, Meltforge fails gracefully with a clear error.
 
 ## **Priority 1 (Usability & First Extensions)**
 
 ### 4. CLI Batch Conversion
 
-* **Story:**
-  *As a power user, I want to convert multiple files with wildcards, so that I save time on repetitive tasks.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a power user, I want to convert multiple files with wildcards, so that I save time on repetitive tasks._
+- **Acceptance Criteria:**
 
-  * CLI accepts `*.wav` or multiple inputs.
-  * Each file is converted in sequence.
-  * Errors don’t stop the whole batch (skip failed, log it).
+  - CLI accepts `*.wav` or multiple inputs.
+  - Each file is converted in sequence.
+  - Errors don’t stop the whole batch (skip failed, log it).
 
 ### 5. UI as Optional Package
 
-* **Story:**
-  *As a casual user, I want to install a desktop UI only if I need it, so that I don’t pull unnecessary dependencies.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a casual user, I want to install a desktop UI only if I need it, so that I don’t pull unnecessary dependencies._
+- **Acceptance Criteria:**
 
-  * UI shipped as a separate binary/package.
-  * Meltforge core runs without UI.
-  * Installing UI adds drag-and-drop interface.
+  - UI shipped as a separate binary/package.
+  - Meltforge core runs without UI.
+  - Installing UI adds drag-and-drop interface.
 
 ### 6. Basic UI Drag & Drop
 
-* **Story:**
-  *As a casual user, I want to drag & drop files into Meltforge’s UI, so that I can convert easily without CLI.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a casual user, I want to drag & drop files into Meltforge’s UI, so that I can convert easily without CLI._
+- **Acceptance Criteria:**
 
-  * User can drop one or multiple files.
-  * Output format can be chosen from a dropdown.
-  * Progress bar shown per file.
-  * Output saved in same folder by default.
+  - User can drop one or multiple files.
+  - Output format can be chosen from a dropdown.
+  - Progress bar shown per file.
+  - Output saved in same folder by default.
 
 ### 7. Basic Settings
 
-* **Story:**
-  *As a user, I want to configure default output folder and quality, so that I don’t re-select every time.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a user, I want to configure default output folder and quality, so that I don’t re-select every time._
+- **Acceptance Criteria:**
 
-  * Config file (`settings.toml` or similar).
-  * Default output directory configurable.
-  * Quality/bitrate defaults configurable.
+  - Config file (`settings.toml` or similar).
+  - Default output directory configurable.
+  - Quality/bitrate defaults configurable.
 
 ## **Priority 2 (Plugins & Developer Focus)**
 
 ### 8. Plugin Management CLI
 
-* **Story:**
-  *As a user, I want `meltforge plugin install/remove/list`, so that I can manage plugins on demand.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a user, I want `meltforge plugin install/remove/list`, so that I can manage plugins on demand._
+- **Acceptance Criteria:**
 
-  * CLI command `plugin list` shows installed plugins.
-  * `plugin install` downloads from registry or Git URL.
-  * `plugin remove` deletes plugin safely.
+  - CLI command `plugin list` shows installed plugins.
+  - `plugin install` downloads from registry or Git URL.
+  - `plugin remove` deletes plugin safely.
 
 ### 9. Plugin Auto-Discovery in UI/CLI
 
-* **Story:**
-  *As a user, I want Meltforge to list available formats from installed plugins, so that I know what’s supported.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a user, I want Meltforge to list available formats from installed plugins, so that I know what’s supported._
+- **Acceptance Criteria:**
 
-  * CLI command `meltforge list-formats` shows all formats.
-  * UI dropdown auto-updates when plugin is added/removed.
+  - CLI command `meltforge list-formats` shows all formats.
+  - UI dropdown auto-updates when plugin is added/removed.
 
 ### 10. Plugin SDK (Stable API)
 
-* **Story:**
-  *As a developer, I want a stable Rust SDK, so that I can write plugins without touching core.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a developer, I want a stable Rust SDK, so that I can write plugins without touching core._
+- **Acceptance Criteria:**
 
-  * `meltforge-plugin-sdk` crate published.
-  * Clear traits for input/output/metadata.
-  * Versioned API to avoid breaking changes.
+  - `meltforge-plugin-sdk` crate published.
+  - Clear traits for input/output/metadata.
+  - Versioned API to avoid breaking changes.
 
 ### 11. Plugin Template & Docs
 
-* **Story:**
-  *As a developer, I want a plugin template and example, so that I can scaffold my plugin fast.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a developer, I want a plugin template and example, so that I can scaffold my plugin fast._
+- **Acceptance Criteria:**
 
-  * `cargo generate meltforge-plugin-template`.
-  * Example plugin included (e.g., WebP).
-  * Docs explaining lifecycle and publishing.
+  - `cargo generate meltforge-plugin-template`.
+  - Example plugin included (e.g., WebP).
+  - Docs explaining lifecycle and publishing.
 
 ### 12. Plugin Capabilities & Security
 
-* **Story:**
-  *As a user, I want plugins to declare capabilities, so that Meltforge can sandbox and prevent misuse.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a user, I want plugins to declare capabilities, so that Meltforge can sandbox and prevent misuse._
+- **Acceptance Criteria:**
 
-  * Plugin manifest (Name, Version, Capabilities, Dependencies).
-  * Meltforge validates manifest at load.
-  * Incompatible plugins rejected cleanly.
-
+  - Plugin manifest (Name, Version, Capabilities, Dependencies).
+  - Meltforge validates manifest at load.
+  - Incompatible plugins rejected cleanly.
 
 ## **Priority 3 (Nice-to-Have / Future Ideas)**
 
 ### 13. Presets
 
-* **Story:**
-  *As a user, I want reusable conversion presets (e.g., “WhatsApp 720p”), so that I don’t configure each time.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a user, I want reusable conversion presets (e.g., “WhatsApp 720p”), so that I don’t configure each time._
+- **Acceptance Criteria:**
 
-  * CLI: `--preset whatsapp`.
-  * UI: preset picker dropdown.
-  * Presets stored in config (JSON/YAML).
+  - CLI: `--preset whatsapp`.
+  - UI: preset picker dropdown.
+  - Presets stored in config (JSON/YAML).
 
 ### 14. Queue & Batch Jobs
 
-* **Story:**
-  *As a power user, I want a conversion queue, so that I can stack multiple jobs hands-off.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a power user, I want a conversion queue, so that I can stack multiple jobs hands-off._
+- **Acceptance Criteria:**
 
-  * CLI: `meltforge queue add input.mp4`.
-  * UI: queue list with progress bars.
-  * Jobs can be cancelled individually.
+  - CLI: `meltforge queue add input.mp4`.
+  - UI: queue list with progress bars.
+  - Jobs can be cancelled individually.
 
 ### 15. Scripting Configs
 
-* **Story:**
-  *As a power user, I want to run conversions from JSON/YAML configs, so that I can automate pipelines.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a power user, I want to run conversions from JSON/YAML configs, so that I can automate pipelines._
+- **Acceptance Criteria:**
 
-  * CLI: `meltforge run config.yaml`.
-  * Config supports multiple files, options, presets.
-  * Errors reported per job.
+  - CLI: `meltforge run config.yaml`.
+  - Config supports multiple files, options, presets.
+  - Errors reported per job.
 
 ### 16. Plugin Store/Registry
 
-* **Story:**
-  *As a developer, I want a plugin registry, so that the community can share and install plugins easily.*
-* **Acceptance Criteria:**
+- **Story:**
+  _As a developer, I want a plugin registry, so that the community can share and install plugins easily._
+- **Acceptance Criteria:**
 
-  * Online index of plugins (GitHub registry or custom).
-  * `meltforge plugin search <term>`.
-  * Secure download + version checks.
+  - Online index of plugins (GitHub registry or custom).
+  - `meltforge plugin search <term>`.
+  - Secure download + version checks.
 
+# Planning
+
+Ah, got you – thanks for the clarification. What you described isn’t a **milestone**, it’s the **first user story**. The **milestone** is broader: _“Meltforge Core”_ with the absolute must-haves.
+
+Let me rewrite your text so the distinction is crystal clear:
+
+---
+
+## #1 User Story – CLI Conversion
+
+For the first user story I will set up a Cargo workspace with two crates:
+
+1. **`mf-core`** – a lightweight library that defines the conversion skeleton, core types, validation logic, and the conversion pipeline. Other MeltForge components such as `mf-cli` and future plugins will depend on this library.
+2. **`mf-cli`** – the command-line interface for MeltForge, acting as the initial user-facing entry point.
+
+To verify the setup, a basic conversion from PNG to JPEG will be implemented. This is only a proof of functionality and will later be extracted into a standalone plugin.
+
+### mf-core
+
+The conversion pipeline (for now) follows this sequence:
+
+**Command → Validation → Conversion → Output → Response**
+
+A conversion job is submitted to `mf-core`. The core validates the request (e.g., input file exists, target format is supported). If validation succeeds, the conversion is executed — initially through a built-in routine, and later via the appropriate plugin. The result is then returned as either:
+
+- **Success** – including the output path.
+- **Error** – with a descriptive message.
+
+### mf-cli
+
+The CLI will be released together with the core as the default interface. Later, a Slint-based desktop UI will be available as an optional component.
+
+The CLI is aimed at users familiar with terminal tools. Its usage looks like this:
+
+```bash
+meltforge convert file.jpg --to png
+```
+
+Here `--to` specifies the target format.
