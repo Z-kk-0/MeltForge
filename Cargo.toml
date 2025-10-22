@@ -1,12 +1,14 @@
+["edition2021"]
 [workspace]
 members = [
     "mf-core",
 ]
 
 [workspace.package]
-edition = "2024"
+edition = "2021"
 workspace.resolver = "3"
 
 [workspace.dependencies]
 clap = "4.5.47"
 image = "0.25.8"
+thiserror = "2.0.17"

@@ -1,3 +1,4 @@
+["edition2021"]
 [package]
 name = "mf-core"
 version = "0.1.0"
