@@ -1,4 +1,5 @@
 # MeltForge
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Z-kk-0/MeltForge?utm_source=oss&utm_medium=github&utm_campaign=Z-kk-0%2FMeltForge&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)
 
 **Meltforge** is a universal, plugin-based converter for video, audio, images and more.  
 It’s **fast**, **extensible**, and **open source** – built with Rust and Slint.
