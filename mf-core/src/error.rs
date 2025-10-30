@@ -3,10 +3,30 @@ use thiserror::Error;
 
 #[derive(Debug, Error)]
 pub enum MeltforgeError {
-    Input = 0,
-    Format = 1,
-    Conversion = 2,
-    Io = 3
+    #[error(transparent)]
+    Input(#[from] InputError),
+
+    #[error(transparent)]
+    Format(#[from] FormatError),
+
+    #[error(transparent)]
+    Conversion(#[from] ConversionError),
+
+    #[error(transparent)]
+    Io(#[from] IoError),
+
+
+}
+
+impl MeltforgeError {
+    pub fn exit_code(&self) -> u8 {
+        match self {
+            MeltforgeError::Input(_)      => 2,
+            MeltforgeError::Format(_)     => 3, 
+            MeltforgeError::Conversion(_) => 4, 
+            MeltforgeError::Io(_)         => 5,
+        }
+    }
 }
 
 #[derive(Debug, Error)]
@@ -21,8 +41,33 @@ pub enum InputError {
 
 #[derive(Debug, Error)]
 pub enum FormatError {
-    #[error("Unsupported Input type: {0}")]
-    UnsupportedInput(String)
-    #[error("Unsupported Output type: {0}")]
+    #[error("unsupported input format {0}")]
+    UnsupportedInput(String),
+
+    #[error("unsupported output format {0}")]
     UnsupportedOutput(String)
+}
+
+#[derive(Debug, Error)]
+pub enum ConversionError {
+    #[error("plugin load failed: {0}")]
+    PluginLoadFailed(String),
+
+    #[error("execution failed: {0}")]
+    ExecutionFailed(String),
+
+    #[error("output write failed: {0}")]
+    OutputWriteFailed(String),
+}
+
+#[derive(Debug, Error)]
+pub enum IoError {
+    #[error("read error: {0}")]
+    ReadError(PathBuf),
+
+    #[error("write error: {0}")]
+    WriteError(PathBuf),
+
+    #[error("permission denied: {0}")]
+    PermissionDenied(PathBuf),
 }
