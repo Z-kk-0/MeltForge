@@ -18,6 +18,25 @@ struct Cli {
     output: Option<PathBuf>,
 }
 
+/// CLI entrypoint that parses command-line arguments, performs an image format conversion, and exits with a non-zero code on failure.
+
+///
+
+/// The function reads arguments into `Cli`, resolves the target format (`"jpg"`/`"jpeg"` → `FormatType::JPEG`, `"png"` → `FormatType::PNG`), constructs a `ConvertJob` with the provided input/output paths, and runs `convert`. If the format is unsupported the process exits with code 3; on conversion error the process exits with the error's exit code. On success it prints the resulting output path.
+
+///
+
+/// # Examples
+
+///
+
+/// ```no_run
+
+/// // From a shell:
+
+/// // mf-cli ./photo.jpg --to png -o ./photo_converted.png
+
+/// ```
 fn main() {
     let args = Cli::parse();
 
