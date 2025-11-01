@@ -1,4 +1,3 @@
-["edition2021"]
 [package]
 name = "mf-core"
 version = "0.1.0"
@@ -6,3 +5,4 @@ edition.workspace = true
 
 [dependencies]
 thiserror = { workspace = true }
+image ={ workspace = true }

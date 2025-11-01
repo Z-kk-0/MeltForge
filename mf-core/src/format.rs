@@ -1,5 +1,5 @@
-
+#[derive(Debug, Clone, Copy)]
 pub enum FormatType {
     PNG,
-    JPG,
+    JPEG,
 }

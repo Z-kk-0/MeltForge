@@ -1,4 +1,4 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -14,17 +14,15 @@ pub enum MeltforgeError {
 
     #[error(transparent)]
     Io(#[from] IoError),
-
-
 }
 
 impl MeltforgeError {
     pub fn exit_code(&self) -> u8 {
         match self {
-            MeltforgeError::Input(_)      => 2,
-            MeltforgeError::Format(_)     => 3, 
-            MeltforgeError::Conversion(_) => 4, 
-            MeltforgeError::Io(_)         => 5,
+            MeltforgeError::Input(_) => 2,
+            MeltforgeError::Format(_) => 3,
+            MeltforgeError::Conversion(_) => 4,
+            MeltforgeError::Io(_) => 5,
         }
     }
 }
@@ -36,8 +34,8 @@ pub enum InputError {
     #[error("Missing target format (--to)")]
     MissingTargetFormat,
     #[error("Invalid argument: {0} ")]
-    InvalidArgument(String)
-}       
+    InvalidArgument(String),
+}
 
 #[derive(Debug, Error)]
 pub enum FormatError {
@@ -45,7 +43,7 @@ pub enum FormatError {
     UnsupportedInput(String),
 
     #[error("unsupported output format {0}")]
-    UnsupportedOutput(String)
+    UnsupportedOutput(String),
 }
 
 #[derive(Debug, Error)]
@@ -70,4 +68,10 @@ pub enum IoError {
 
     #[error("permission denied: {0}")]
     PermissionDenied(PathBuf),
+
+    #[error("output file already exists: {0}")]
+    AlreadyExists(PathBuf),
+
+    #[error("parent directory missing: {0}")]
+    MissingParent(PathBuf),
 }

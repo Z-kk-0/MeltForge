@@ -1,8 +1,8 @@
-["edition2021"]
 [workspace]
-members = [
+members = [ "mf-cli",
     "mf-core",
 ]
+resolver = "2"
 
 [workspace.package]
 edition = "2021"
