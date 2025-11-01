@@ -78,7 +78,9 @@ fn derive_output_path(input: &Path, to: FormatType) -> PathBuf {
 
 fn map_io_write(e: io::Error, p: PathBuf) -> MeltforgeError {
     match e.kind() {
+        io::ErrorKind::AlreadyExists => IoError::AlreadyExists(p).into(),
+        io::ErrorKind::NotFound => IoError::MissingParent(p).into(),
         io::ErrorKind::PermissionDenied => IoError::PermissionDenied(p).into(),
-        _ => IoError::WriteError(p).into(),
+        _ => IoError::WriteFailed(p).into(),
     }
 }

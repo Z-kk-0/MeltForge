@@ -39,7 +39,6 @@ fn validate_input_format(path: &Path) -> Result<FormatType, FormatError> {
 }
 
 pub fn detect_input_format(path: &Path) -> Result<FormatType, FormatError> {
-    // Magic Spell i dont even really know what it does
     let ext = path
         .extension()
         .and_then(|s| s.to_str())
@@ -68,9 +67,9 @@ pub fn validate_compatibility(input: FormatType, output: FormatType) -> Result<(
 
 fn validate_output_dir(output_path: &Path) -> Result<(), IoError> {
     if output_path.exists() {
-        return Err(IoError::WriteError(output_path.to_path_buf()));
+        return Err(IoError::AlreadyExists(output_path.to_path_buf()).into());
     }
-
+    // defaulting to used directory for User friendly expierience
     let dir = output_path.parent().unwrap_or(Path::new("."));
 
     if !dir.exists() {

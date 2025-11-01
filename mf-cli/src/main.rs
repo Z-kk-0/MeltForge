@@ -22,7 +22,10 @@ fn main() {
     let args = Cli::parse();
 
     println!("input : {}", args.input.display());
-    println!("output: {}", args.to);
+    println!("to: {}", args.to);
+    if let Some(output) = &args.output {
+        println!("output: {}", output.display());
+    }
 
     let format_type = match args.to.to_lowercase().as_str() {
         "jpg" | "jpeg" => FormatType::JPEG,
@@ -45,6 +48,17 @@ fn main() {
         }
         Err(e) => {
             eprintln!("Error: {e}");
+            match &e {
+                MeltforgeError::Io(ioe) => match ioe {
+                    IoError::AlreadyExists(p) => eprintln!("File already exists: {}", p.display()),
+                    IoError::MissingParent(p) => {
+                        eprintln!("Target directory not found: {}", p.display())
+                    }
+                    IoError::PermissionDenied(p) => eprintln!("No permission for: {}", p.display()),
+                    _ => {}
+                },
+                _ => {}
+            }
             std::process::exit(e.exit_code().into());
         }
     }
