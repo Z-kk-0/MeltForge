@@ -192,12 +192,6 @@ Alright Bro – hier kriegst du die komplette Ladung: **alle User Stories**, sch
 
 # Planning
 
-Ah, got you – thanks for the clarification. What you described isn’t a **milestone**, it’s the **first user story**. The **milestone** is broader: _“Meltforge Core”_ with the absolute must-haves.
-
-Let me rewrite your text so the distinction is crystal clear:
-
----
-
 ## #1 User Story – CLI Conversion
 
 For the first user story I will set up a Cargo workspace with two crates:
