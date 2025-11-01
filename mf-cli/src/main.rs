@@ -1,6 +1,6 @@
 use clap::{Parser, ValueHint};
 use mf_core::convert::convert;
-use mf_core::error::MeltforgeError;
+use mf_core::error::{IoError, MeltforgeError};
 use mf_core::format::FormatType;
 use mf_core::job::ConvertJob;
 use std::path::PathBuf;

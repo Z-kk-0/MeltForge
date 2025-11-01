@@ -73,7 +73,7 @@ fn validate_output_dir(output_path: &Path) -> Result<(), IoError> {
     let dir = output_path.parent().unwrap_or(Path::new("."));
 
     if !dir.exists() {
-        return Err(IoError::WriteError(output_path.to_path_buf()));
+        return Err(IoError::MissingParent(output_path.to_path_buf()));
     }
 
     let test_path = dir.join(".meltforge_write_test");

@@ -81,6 +81,6 @@ fn map_io_write(e: io::Error, p: PathBuf) -> MeltforgeError {
         io::ErrorKind::AlreadyExists => IoError::AlreadyExists(p).into(),
         io::ErrorKind::NotFound => IoError::MissingParent(p).into(),
         io::ErrorKind::PermissionDenied => IoError::PermissionDenied(p).into(),
-        _ => IoError::WriteFailed(p).into(),
+        _ => IoError::WriteError(p).into(),
     }
 }
