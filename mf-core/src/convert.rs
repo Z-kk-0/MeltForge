@@ -7,10 +7,10 @@ use std::{
 use image::{ImageError, ImageFormat};
 
 use crate::{
-    error::{ConversionError, FormatError, IoError, MeltforgeError},
     format::FormatType,
     job::ConvertJob,
-    validate::{detect_input_format, validate_job},
+    validation::error::{ConversionError, FormatError, IoError, MeltforgeError},
+    validation::job_validation::{detect_input_format, validate_job},
 };
 
 pub fn convert(cj: ConvertJob) -> Result<PathBuf, MeltforgeError> {

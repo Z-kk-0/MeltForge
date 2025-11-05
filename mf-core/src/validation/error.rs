@@ -1,4 +1,7 @@
-use std::path::{Path, PathBuf};
+use std::{
+    io,
+    path::{Path, PathBuf},
+};
 use thiserror::Error;
 
 #[derive(Debug, Error)]
@@ -74,4 +77,19 @@ pub enum IoError {
 
     #[error("parent directory missing: {0}")]
     MissingParent(PathBuf),
+}
+
+#[derive(Debug, Error)]
+pub enum ManifestScanError {
+    #[error("IO error: {0}")]
+    Io(#[from] io::Error),
+
+    #[error("TOML parse error in {path:?}: {source}")]
+    TomlParse {
+        path: PathBuf,
+        source: toml::de::Error,
+    },
+
+    #[error("Manifest validation error in {path:?}: {msg}")]
+    Invalid { path: PathBuf, msg: String },
 }

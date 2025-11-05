@@ -3,9 +3,9 @@ use mf_core::utility::ensure_and_scan_dir;
 use std::path::PathBuf;
 
 use mf_core::convert::convert;
-use mf_core::error::{IoError, MeltforgeError};
 use mf_core::format::FormatType;
 use mf_core::job::ConvertJob;
+use mf_core::validation::error::{IoError, MeltforgeError};
 
 #[derive(Parser, Debug)]
 #[command(name = "meltforge", version, about = "Universal converter")]
@@ -31,7 +31,7 @@ enum Commands {
 fn main() {
     let plugins = ensure_and_scan_dir("plugins");
     println!("Plugins found: {:?}", plugins);
-    
+
     let cli = Cli::parse();
 
     let exit_code = match cli.command {
