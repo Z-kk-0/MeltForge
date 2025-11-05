@@ -1,4 +1,5 @@
 use clap::{Parser, Subcommand, ValueHint};
+use mf_core::utility::ensure_and_scan_dir;
 use std::path::PathBuf;
 
 use mf_core::convert::convert;
@@ -28,6 +29,9 @@ enum Commands {
 }
 
 fn main() {
+    let plugins = ensure_and_scan_dir("plugins");
+    println!("Plugins found: {:?}", plugins);
+    
     let cli = Cli::parse();
 
     let exit_code = match cli.command {

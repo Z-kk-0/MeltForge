@@ -2,7 +2,9 @@ pub mod convert;
 pub mod error;
 pub mod format;
 pub mod job;
-pub mod validate;
+pub mod validation;
+pub mod plugin;
+pub mod utility;
 
 pub fn add(left: u64, right: u64) -> u64 {
     left + right
