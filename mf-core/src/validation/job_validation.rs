@@ -5,9 +5,9 @@ use std::{
 };
 
 use crate::{
-    error::{FormatError, InputError, IoError, MeltforgeError},
     format::FormatType,
     job::ConvertJob,
+    validation::error::{FormatError, InputError, IoError, MeltforgeError},
 };
 
 pub fn validate_job(cj: &ConvertJob) -> Result<(), MeltforgeError> {
