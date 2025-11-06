@@ -223,3 +223,45 @@ meltforge convert file.jpg --to png
 ```
 
 Here `--to` specifies the target format.
+
+## #4 UserStory 
+- **Story:**
+  _As a power user, I want to convert multiple files with wildcards, so that I save time on repetitive tasks._
+- **Acceptance Criteria:**
+
+  - CLI accepts `*.wav` or multiple inputs.
+  - Each file is converted in sequence.
+  - Errors don’t stop the whole batch (skip failed, log it).
+
+
+first i have to make it technically possible to convert multiple files in the core itsef because currently it only has
+
+```rust
+pub fn convert(cj: ConvertJob) -> Result<PathBuf, MeltforgeError> {
+    validate_job(&cj)?; // Validate
+
+    let mut output_path = cj
+        .output
+        .clone()
+        .unwrap_or_else(|| derive_output_path(&cj.input, cj.format_type));
+
+    if let Some(parent) = output_path.parent() {
+        if !parent.exists() {
+            fs::create_dir_all(parent).map_err(|e| map_io_write(e, parent.to_path_buf()))?;
+        }
+    }
+    let input_fmt = detect_input_format(&cj.input).map_err(|e| MeltforgeError::from(e))?;
+    match (input_fmt, cj.format_type) {
+        (FormatType::PNG, FormatType::JPEG) => convert_png_jpg(&cj.input, &output_path)?,
+        (FormatType::JPEG, FormatType::PNG) => convert_jpg_png(&cj.input, &output_path)?,
+        _ => {
+            return Err(FormatError::UnsupportedOutput(format!(
+                "{:?} → {:?} not supported yet",
+                input_fmt, cj.format_type
+            ))
+            .into());
+        }
+    } // Convert currently only png  to jpg will later be replaced with the plugin function
+```
+so basically a function that takes a list of ConverJobs and converts them each step by step. Maybe it is possible to multithread this so it converts faster
+then the cli will need the capabilities to accept and read wildcards correctly. This will all be in the CLI itself and not in the core so we can seperate concerns. The core should still be flexible and as lightweight as possible.
