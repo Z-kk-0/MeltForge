@@ -17,6 +17,9 @@ pub enum MeltforgeError {
 
     #[error(transparent)]
     Io(#[from] IoError),
+
+    #[error(transparent)]
+    ManifestScanError(#[from] ManifestScanError),
 }
 
 impl MeltforgeError {
@@ -26,6 +29,7 @@ impl MeltforgeError {
             MeltforgeError::Format(_) => 3,
             MeltforgeError::Conversion(_) => 4,
             MeltforgeError::Io(_) => 5,
+            MeltforgeError::ManifestScanError(_) => 6,
         }
     }
 }

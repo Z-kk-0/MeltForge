@@ -1,17 +1,19 @@
 use std::path::PathBuf;
 
+use serde::Deserialize;
+
 use crate::{plugin::Manifest, validation::error::ManifestScanError};
 
 #[derive(Deserialize)]
-struct RawManifest {
+pub struct RawManifest {
     name: String,
     version: String,
-    capabilites: RawCapabilites,
+    capabilities: RawCapabilites,
 }
-
-struct RawCapabilites {
-    input: Vec<String>,
-    output: Vec<String>,
+#[derive(Deserialize)]
+pub struct RawCapabilites {
+    inputs: Vec<String>,
+    outputs: Vec<String>,
 }
 
 pub fn validate_plugin(raw: RawManifest, path: PathBuf) -> Result<Manifest, ManifestScanError> {

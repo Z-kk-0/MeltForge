@@ -1,11 +1,12 @@
 use clap::{Parser, Subcommand, ValueHint};
-use mf_core::utility::ensure_and_scan_dir;
+use mf_core::plugin::scan_plugins;
+use std::env::args;
 use std::path::PathBuf;
 
 use mf_core::convert::convert;
 use mf_core::format::FormatType;
 use mf_core::job::ConvertJob;
-use mf_core::validation::error::{IoError, MeltforgeError};
+use mf_core::validation::error::{FormatError, IoError, MeltforgeError};
 
 #[derive(Parser, Debug)]
 #[command(name = "meltforge", version, about = "Universal converter")]
@@ -28,9 +29,15 @@ enum Commands {
     },
 }
 
-fn main() {
-    let plugins = ensure_and_scan_dir("plugins");
-    println!("Plugins found: {:?}", plugins);
+fn main() -> Result<(), MeltforgeError> {
+    let plugins = scan_plugins("plugins")?;
+    println!("Plugins found: {:?}", plugins.len());
+
+    for man in &plugins {
+        println!("- {} v{} at {}", man.name, man.version, man.path.display());
+        println!("  inputs:  {:?}", man.inputs);
+        println!("  outputs: {:?}", man.outputs);
+    }
 
     let cli = Cli::parse();
 
@@ -42,14 +49,16 @@ fn main() {
                 println!("output: {}", p.display());
             }
 
-            let format_type = match to.to_lowercase().as_str() {
-                "jpg" | "jpeg" => FormatType::JPEG,
-                "png" => FormatType::PNG,
-                _ => {
-                    eprintln!("Unsupported format: {}", to);
-                    return;
+            fn parse_format(to: &str) -> Result<FormatType, MeltforgeError> {
+                match to.to_lowercase().as_str() {
+                    "jpg" | "jpeg" => Ok(FormatType::JPEG),
+                    "png" => Ok(FormatType::PNG),
+                    _ => Err(MeltforgeError::Format(FormatError::UnsupportedOutput(
+                        to.to_string(),
+                    ))),
                 }
-            };
+            }
+            let format_type = parse_format(&to)?;
 
             let job = ConvertJob {
                 input,

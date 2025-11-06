@@ -1,6 +1,8 @@
-use std::fs;
+use std::{fs, path::{Path, PathBuf}};
 
 use serde::Deserialize;
+
+use crate::validation::{error::ManifestScanError, plugin_validation::{RawManifest, validate_plugin}};
 
 #[derive(Debug, Clone)]
 pub struct Manifest {
@@ -38,7 +40,7 @@ pub fn scan_plugins(root: impl AsRef<Path>) -> Result<Vec<Manifest>, ManifestSca
                 path: manifest_path.clone(),
                 source: e,
             })?;
-        let manifest = validate_manifest(raw, manifest_path)?;
+        let manifest = validate_plugin(raw, manifest_path)?;
         found.push(manifest);
     }
 
