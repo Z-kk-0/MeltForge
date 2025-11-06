@@ -8,10 +8,10 @@ use crate::{plugin::Manifest, validation::error::ManifestScanError};
 pub struct RawManifest {
     name: String,
     version: String,
-    capabilities: RawCapabilites,
+    capabilities: RawCapabilities,
 }
 #[derive(Deserialize)]
-pub struct RawCapabilites {
+pub struct RawCapabilities {
     inputs: Vec<String>,
     outputs: Vec<String>,
 }

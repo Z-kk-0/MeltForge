@@ -1,6 +1,5 @@
 use clap::{Parser, Subcommand, ValueHint};
 use mf_core::plugin::scan_plugins;
-use std::env::args;
 use std::path::PathBuf;
 
 use mf_core::convert::convert;
