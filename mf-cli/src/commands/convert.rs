@@ -37,15 +37,23 @@ pub fn run_convert_job(job: ConvertJob) -> Result<i32, MeltforgeError> {
 }
 
 pub fn run_convert(
-    input: Vec<PathBuf>,
+    inputs: Vec<PathBuf>,
     to: String,
     output: Option<PathBuf>,
 ) -> Result<i32, MeltforgeError> {
-    let jobs = parse_convert_args(inputs, &to, output.clone())?;
+    let jobs = parse_convert_args(inputs, to, output.clone())?;
 
     if jobs.len() > 1 {
         if let Some(ref out) = output {
-            if !out.is_dir() {
+            if !out.exists() {
+                std::fs::create_dir_all(out).map_err(|e| {
+                    MeltforgeError::Io(IoError::InvalidOutput(format!(
+                        "Failed to create directory '{}': {}",
+                        out.display(),
+                        e
+                    )))
+                })?;
+            } else if !out.is_dir() {
                 return Err(MeltforgeError::Io(IoError::InvalidOutput(format!(
                     "Output '{}' must be a directory when converting multiple files",
                     out.display()
@@ -53,11 +61,19 @@ pub fn run_convert(
             }
         }
     }
-    run_multi_convert_job(jobs)?
+
+    let failures = run_multi_convert_job(jobs);
+    Ok(if failures > 0 { 1 } else { 0 })
 }
 
-pub fn run_multi_convert_job(cj: Vec<ConvertJob>) {
-    for c in cj {
-        run_convert_job(c);
+pub fn run_multi_convert_job(jobs: Vec<ConvertJob>) -> usize {
+    let mut failures = 0usize;
+    for job in jobs {
+        match run_convert_job(job) {
+            Ok(code) if code == 0 => {}
+            Ok(_) => failures += 1,
+            Err(_) => failures += 1,
+        }
     }
+    failures
 }
