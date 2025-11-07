@@ -20,5 +20,8 @@ pub enum Commands {
 
         #[arg(long = "output", short = 'o', value_hint = ValueHint::FilePath)]
         output: Option<PathBuf>,
+
+        #[arg(long = "jobs", short = 'j', value_name = "N")]
+        jobs: Option<usize>,
     },
 }

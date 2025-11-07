@@ -6,6 +6,11 @@ pub use convert::run_convert;
 
 pub fn dispatch_command(cli: Cli) -> Result<i32, MeltforgeError> {
     match cli.command {
-        Commands::Convert { input, to, output } => run_convert(input, to, output),
+        Commands::Convert {
+            input,
+            to,
+            output,
+            jobs,
+        } => run_convert(input, to, output, jobs),
     }
 }

@@ -7,7 +7,6 @@ use commands::dispatch_command;
 use mf_core::validation::error::MeltforgeError;
 
 fn main() -> Result<(), MeltforgeError> {
-
     util::plugins::print_scanned_plugins("plugins")?;
 
     let cli = cli::Cli::parse();
