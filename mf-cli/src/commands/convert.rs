@@ -45,7 +45,8 @@ pub fn run_convert(
     output: Option<PathBuf>,
     threads: Option<usize>,
 ) -> Result<i32, MeltforgeError> {
-    let jobs = parse_convert_args(inputs, to, output.clone())?;
+    let jobs = parse_convert_args(inputs, &to, output.clone())?;
+    let total = jobs.len();
 
     if jobs.len() > 1 {
         if let Some(ref out) = output {
@@ -67,7 +68,13 @@ pub fn run_convert(
     }
 
     let failures = run_multi_convert_job(jobs, threads);
-    Ok(if failures > 0 { 1 } else { 0 })
+    let successes = total.saturating_sub(failures);
+    println!(
+        "\nConversion runned with {} Successes and {} Failures",
+        successes, failures
+    );
+
+    Ok(0)
 }
 
 pub fn run_multi_convert_job(jobs: Vec<ConvertJob>, threads: Option<usize>) -> usize {
