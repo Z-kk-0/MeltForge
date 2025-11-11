@@ -67,30 +67,38 @@ pub fn run_convert(
         }
     }
 
-    let failures = run_multi_convert_job(jobs, threads);
+    let failures = run_multi_convert_job(jobs, threads)?;
     let successes = total.saturating_sub(failures);
     println!(
-        "\nConversion runned with {} Successes and {} Failures",
+        "\nConversion completed: {} succeeded, {} failed",
         successes, failures
     );
 
-    Ok(0)
+    if failures > 0 {
+        Ok(1)
+    } else {
+        Ok(0)
+    }
 }
 
-pub fn run_multi_convert_job(jobs: Vec<ConvertJob>, threads: Option<usize>) -> usize {
+pub fn run_multi_convert_job(jobs: Vec<ConvertJob>, threads: Option<usize>) -> Result<usize, MeltforgeError> {
     let pool = ThreadPoolBuilder::new()
         .num_threads(threads.unwrap_or_else(num_cpus))
         .build()
-        .expect("build thread pool");
+        .map_err(|e| MeltforgeError::Io(IoError::InvalidOutput(
+            format!("Failed to create thread pool: {}", e)
+        )))?;
 
-    pool.install(|| {
+    let failures = pool.install(|| {
         jobs.into_par_iter()
             .map(|job| match run_convert_job(job) {
                 Ok(0) => 0,
                 Ok(_) | Err(_) => 1,
             })
             .sum::<usize>()
-    })
+    });
+
+    Ok(failures)
 }
 
 fn num_cpus() -> usize {
