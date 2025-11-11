@@ -1,30 +1,46 @@
-export component MainWindow inherits Window {
-    width: 900px;
-    height: 600px;
-    background: #f8f9fa;
-    title: "Meltforge";
-    
-    VerticalLayout {
-        Rectangle {
-            height: 60px;
-            background: #e5e7eb;
-            horizontal-stretch: 1;
+import { NavItem } from "components/NavItem.slint";
 
-            Text {
-                text: "Meltforge";
-                font-size: 24px;
-                color: #111111;
-                vertical-alignment: center;
-                horizontal-alignment: center;
+export component MainWindow inherits Window {
+    width: 1000px;
+    height: 650px;
+    background: white;
+    title: "Meltforge";
+
+    HorizontalLayout {
+        Rectangle {
+            width: 220px;
+            background: #f3f4f6;
+
+            VerticalLayout {
+                spacing: 4px;
+                padding: 12px;
+
+                Text {
+                    text: "Meltforge";
+                    font-size: 20px;
+                    font-weight: 600;
+                    color: #111111;
+                    padding-bottom: 8px;
+                }
+
+                NavItem { label: "Convert"; }
+                NavItem { label: "Plugins"; }
+
+                Rectangle { vertical-stretch: 1; background: transparent; }
             }
         }
-    }
 
-    Text {
-    text: "Welcome to Meltforge";
-    color: black;
-    font-size: 24px;
-    horizontal-alignment: center;
-    vertical-alignment: center;
+        Rectangle {
+            background: white;
+            horizontal-stretch: 1;
+            vertical-stretch: 1;
+
+            Text {
+                text: "Content Area";
+                color: #666;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
     }
 }

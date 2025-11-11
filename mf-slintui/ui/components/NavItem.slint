@@ -1,0 +1,22 @@
+component NavItem inherits Rectangle {
+    in property <string> label;
+    out property <bool> clicked;
+
+    hover_area := TouchArea {
+        clicked => { root.clicked = true; }
+    }
+
+    private property <bool> is_hovered <=> hover_area.has-hover;
+
+    height: 40px;
+    horizontal-stretch: 1;
+    background: is_hovered ? #e5e7eb : transparent;
+
+    Text {
+        text: root.label;
+        font-size: 16px;
+        color: #111111;
+        vertical-alignment: center;
+        x: 16px;
+    }
+}
