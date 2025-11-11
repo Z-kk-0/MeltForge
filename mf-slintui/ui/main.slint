@@ -1,0 +1,30 @@
+export component MainWindow inherits Window {
+    width: 900px;
+    height: 600px;
+    background: #f8f9fa;
+    title: "Meltforge";
+    
+    VerticalLayout {
+        Rectangle {
+            height: 60px;
+            background: #e5e7eb;
+            horizontal-stretch: 1;
+
+            Text {
+                text: "Meltforge";
+                font-size: 24px;
+                color: #111111;
+                vertical-alignment: center;
+                horizontal-alignment: center;
+            }
+        }
+    }
+
+    Text {
+    text: "Welcome to Meltforge";
+    color: black;
+    font-size: 24px;
+    horizontal-alignment: center;
+    vertical-alignment: center;
+    }
+}

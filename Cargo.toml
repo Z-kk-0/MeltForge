@@ -1,6 +1,6 @@
 [workspace]
 members = [ "mf-cli",
-    "mf-core",
+    "mf-core", "mf-slintui",
 ]
 resolver = "2"
 
@@ -15,3 +15,5 @@ thiserror = "2.0.17"
 toml = "0.9.8"
 serde = "1.0.228"
 rayon = "1.10"
+slint = "1.14.1"
+slint-build = "1.14.1"

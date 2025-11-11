@@ -1,0 +1,11 @@
+[package]
+name = "mf-slintui"
+version = "0.1.0"
+edition.workspace = true
+build = "build.rs"
+
+[dependencies]
+slint = { workspace = true }
+
+[build-dependencies]
+slint-build = { workspace = true }
