@@ -81,6 +81,9 @@ pub enum IoError {
 
     #[error("parent directory missing: {0}")]
     MissingParent(PathBuf),
+
+    #[error("Invalid Output: {0}")]
+    InvalidOutput(String),
 }
 
 #[derive(Debug, Error)]
