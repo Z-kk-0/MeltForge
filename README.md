@@ -18,8 +18,6 @@ It’s designed to be **lightweight by default** and **extendible on demand**:
 
 **One tool, endless conversions.**
 
-Alright Bro – hier kriegst du die komplette Ladung: **alle User Stories**, schön geordnet nach Priority (P0–P3), jeweils mit **Acceptance Criteria**. Kannst du direkt reviewen, kürzen oder umbauen.
-
 # **Meltforge – User Stories & Priorities**
 
 ## **Priority 0 (Core – must exist before anything else)**
