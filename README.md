@@ -259,3 +259,10 @@ then the cli will need the capabilities to accept and read wildcards correctly. 
 
 ## #5 User Story
 The most important thing would be a area where you can dnd files into and where you can click on the area where you can select your files via the Users desired file manager. If you drop it in you also need an option to set the conversion output and the output path.
+
+### Ui Coloring
+its about time for the coloring aspect
+
+background: Charcoal #36454f
+primary:  Orange: #F66907
+secondary: lava: #cf1020
