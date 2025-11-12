@@ -1,46 +1,52 @@
+import { Theme } from "Theme/Theme.slint";
 import { NavItem } from "components/NavItem.slint";
+import { PluginsPage } from "pages/plugins.slint";
+import { ConvertPage } from "pages/convert.slint";
 
 export component MainWindow inherits Window {
-    width: 1000px;
-    height: 650px;
-    background: white;
+    width: 1000px; height: 650px;
+    background: Theme.bg;
     title: "Meltforge";
+
+
+    property <int> current_page: 0;
 
     HorizontalLayout {
         Rectangle {
             width: 220px;
-            background: #f3f4f6;
+            background: Theme.bg_light;
 
             VerticalLayout {
-                spacing: 4px;
-                padding: 12px;
+                spacing: Theme.gap; padding: Theme.pad;
 
                 Text {
                     text: "Meltforge";
-                    font-size: 20px;
-                    font-weight: 600;
-                    color: #111111;
-                    padding-bottom: 8px;
+                    font-size: 18px; font-weight: 600;
+                    color: Theme.text;
+                    padding-bottom: 4px;
+                    horizontal-alignment: center;
                 }
 
-                NavItem { label: "Convert"; }
-                NavItem { label: "Plugins"; }
+                NavItem {
+                    label: "Convert";
+                    selected: root.current_page == 0;
+                    clicked => { root.current_page = 0; }
+                }
+                NavItem {
+                    label: "Plugins";
+                    selected: root.current_page == 1;
+                    clicked => { root.current_page = 1; }
+                }
 
                 Rectangle { vertical-stretch: 1; background: transparent; }
+
+
+                Rectangle { height: 1px; background: Theme.divider; }
+                Text { text: "v0.1"; color: Theme.text_muted; font-size: 12px; padding-top: 6px; }
             }
         }
-
-        Rectangle {
-            background: white;
-            horizontal-stretch: 1;
-            vertical-stretch: 1;
-
-            Text {
-                text: "Content Area";
-                color: #666;
-                horizontal-alignment: center;
-                vertical-alignment: center;
-            }
-        }
+        
+        if root.current_page == 0: ConvertPage { }
+        if root.current_page == 1: PluginsPage { }
     }
 }

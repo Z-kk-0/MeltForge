@@ -266,3 +266,31 @@ its about time for the coloring aspect
 background: Charcoal #36454f
 primary:  Orange: #F66907
 secondary: lava: #cf1020
+
+#### Neutrals
+
+| Role                         | Color     | Use                                                    |
+| ---------------------------- | --------- | ------------------------------------------------------ |
+| Background (lighter section) | `#2C353C` | Sidebars, modals, subtle contrast from main background |
+| Surface / Card               | `#404E57` | Panel backgrounds, hover states                        |
+| Divider / Border             | `#5A6A74` | Lines, outlines, separators                            |
+| Text Primary                 | `#EAEAEA` | Main text on dark backgrounds                          |
+| Text Secondary               | `#B8C2C8` | Captions, labels, disabled text                        |
+
+#### Accent and Utility Colors
+
+| Purpose | Color                | Description                                    |
+| ------- | -------------------- | ---------------------------------------------- |
+| Success | `#27AE60`            | Subtle green to pop against dark UI            |
+| Warning | `#F2C037`            | Warm gold fits naturally beside the orange     |
+| Info    | `#3498DB`            | Cooler tone for neutral hints, tooltips, links |
+| Error   | use `#CF1020` (lava) | Already perfect – intense, decisive red        |
+
+#### Highlight and Depth
+
+| Variant        | Color     | Use                                 |
+| -------------- | --------- | ----------------------------------- |
+| Orange Light   | `#FF8C33` | Hover or focus of primary buttons   |
+| Orange Dark    | `#C35605` | Active or pressed states            |
+| Lava Dark      | `#A00E1A` | Hover state for destructive actions |
+| Charcoal Light | `#4A5A64` | Hover for dark panels               |
