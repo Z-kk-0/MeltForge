@@ -1,0 +1,92 @@
+import { Theme } from "../Theme/Theme.slint";
+import { Tooltip } from "Tooltip.slint";
+
+component SidebarItem inherits Rectangle {
+    in property <string> label;
+    in property <image> icon;
+    in property <bool> selected: false;
+    callback clicked();
+    height: 64px;
+    background: selected ? Theme.surface : transparent;
+    border-radius: Theme.radius;
+    ta := TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+
+    private property <bool> is_hovered <=> ta.has-hover;
+    border-width: selected ? 1px : 0px;
+    border-color: Theme.primary;
+    VerticalLayout {
+        spacing: 4px;
+        padding-top: 8px;
+        padding-bottom: 6px;
+        Rectangle {
+            height: 24px;
+            horizontal-stretch: 1;
+            Image {
+                source: root.icon;
+                width: 24px;
+                height: 24px;
+                x: (parent.width - self.width) / 2;   // harte Zentrierung
+        opacity: selected ? 1.0 : (is_hovered ? 0.95 : 0.85);
+            }
+        }
+
+        tooltip := Tooltip {
+            text: root.label;
+            tooltip-visible: ta.has-hover;
+            x: parent.width + 6px;
+        }
+    }
+}
+
+export component Sidebar inherits Rectangle {
+    in property <int> current: 0;
+    callback select(int);
+    width: 88px;
+    background: Theme.bg_light;
+    VerticalLayout {
+        spacing: 6px;
+        padding: 8px;
+        Text {
+            text: "MF";
+            font-weight: 700;
+            color: Theme.text;
+            horizontal-alignment: center;
+            padding-bottom: 6px;
+        }
+
+        SidebarItem {
+            label: "Convert";
+            icon: @image-url("../icons/convert.svg");
+            selected: root.current == 0;
+            clicked => {
+                root.select(0);
+            }
+        }
+
+        SidebarItem {
+            label: "Plugins";
+            icon: @image-url("../icons/plugins.svg");
+            selected: root.current == 1;
+            clicked => {
+                root.select(1);
+            }
+        }
+
+        Rectangle {
+            vertical-stretch: 1;
+            background: transparent;
+        }
+
+        Text {
+            text: "v0.1";
+            font-size: 10px;
+            color: Theme.text_muted;
+            horizontal-alignment: center;
+            padding-bottom: 6px;
+        }
+    }
+}

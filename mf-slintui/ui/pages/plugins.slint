@@ -1,15 +1,21 @@
 import { Theme } from "../Theme/Theme.slint";
+import { ButtonPrimary } from "../components/buttonprimary.slint";
 
-export component PluginsPage inherits Rectangle  {
+export component PluginsPage inherits Rectangle {
     background: Theme.surface;
     horizontal-stretch: 1;
     vertical-stretch: 1;
-
-    Text {
-        text: "Plugins Page";
-        color: Theme.text;
-        font-size: 18px;
-        horizontal-alignment: center;
-        vertical-alignment: center;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 8px;
+    VerticalLayout {
+        Rectangle {
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-top: 8px;
+            background: Theme.surface;
+            horizontal-stretch: 1;
+            vertical-stretch: 1;
+        }
     }
 }

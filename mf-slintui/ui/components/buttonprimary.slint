@@ -1,0 +1,25 @@
+import { Theme } from "../theme/Theme.slint";
+
+export component ButtonPrimary inherits Rectangle {
+    in property <string> label;
+    callback clicked();
+    height: 36px;
+    min-width: 96px;
+    background: is_pressed ? Theme.primary_dark : (is_hovered ? Theme.primary_light : Theme.primary);
+    border-radius: Theme.radius;
+    ta := TouchArea {
+        clicked() => {
+            root.clicked()
+        }
+    }
+
+    private property <bool> is_hovered <=> ta.has-hover;
+    private property <bool> is_pressed <=> ta.pressed;
+    Text {
+        text: root.label;
+        color: white;
+        font-weight: 600;
+        vertical-alignment: center;
+        horizontal-alignment: center;
+    }
+}

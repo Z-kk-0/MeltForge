@@ -1,51 +1,22 @@
 import { Theme } from "Theme/Theme.slint";
-import { NavItem } from "components/NavItem.slint";
+import { Sidebar } from "components/Sidebar.slint";
 import { PluginsPage } from "pages/plugins.slint";
 import { ConvertPage } from "pages/convert.slint";
 
 export component MainWindow inherits Window {
-    width: 1000px; height: 650px;
+    width: 1000px;
+    height: 650px;
     background: Theme.bg;
     title: "Meltforge";
-
-
     property <int> current_page: 0;
-
     HorizontalLayout {
-        Rectangle {
-            width: 220px;
-            background: Theme.bg_light;
-
-            VerticalLayout {
-                spacing: Theme.gap; padding: Theme.pad;
-
-                Text {
-                    text: "Meltforge";
-                    font-size: 18px; font-weight: 600;
-                    color: Theme.text;
-                    padding-bottom: 4px;
-                    horizontal-alignment: center;
-                }
-
-                NavItem {
-                    label: "Convert";
-                    selected: root.current_page == 0;
-                    clicked => { root.current_page = 0; }
-                }
-                NavItem {
-                    label: "Plugins";
-                    selected: root.current_page == 1;
-                    clicked => { root.current_page = 1; }
-                }
-
-                Rectangle { vertical-stretch: 1; background: transparent; }
-
-
-                Rectangle { height: 1px; background: Theme.divider; }
-                Text { text: "v0.1"; color: Theme.text_muted; font-size: 12px; padding-top: 6px; }
+        Sidebar {
+            current: root.current_page;
+            select(i) => {
+                root.current_page = i;
             }
         }
-        
+
         if root.current_page == 0: ConvertPage { }
         if root.current_page == 1: PluginsPage { }
     }
