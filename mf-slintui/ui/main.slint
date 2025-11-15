@@ -1,5 +1,5 @@
 import { Theme } from "Theme/Theme.slint";
-import { Sidebar } from "components/Sidebar.slint";
+import { Sidebar } from "components/SideBar.slint";
 import { PluginsPage } from "pages/plugins.slint";
 import { ConvertPage } from "pages/convert.slint";
 
@@ -11,6 +11,7 @@ export component MainWindow inherits Window {
     property <int> current_page: 0;
     HorizontalLayout {
         Sidebar {
+            clip: false;
             current: root.current_page;
             select(i) => {
                 root.current_page = i;

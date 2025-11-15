@@ -18,28 +18,31 @@ component SidebarItem inherits Rectangle {
     private property <bool> is_hovered <=> ta.has-hover;
     border-width: selected ? 1px : 0px;
     border-color: Theme.primary;
+    clip: false;
     VerticalLayout {
-        spacing: 4px;
         padding-top: 8px;
         padding-bottom: 6px;
         Rectangle {
-            height: 24px;
+            height: parent.height / 2;
             horizontal-stretch: 1;
             Image {
                 source: root.icon;
                 width: 24px;
                 height: 24px;
-                x: (parent.width - self.width) / 2;   // harte Zentrierung
+                x: (parent.width - self.width) / 2;   
         opacity: selected ? 1.0 : (is_hovered ? 0.95 : 0.85);
             }
         }
-
-        tooltip := Tooltip {
-            text: root.label;
-            tooltip-visible: ta.has-hover;
-            x: parent.width + 6px;
-        }
     }
+
+    tooltip := Tooltip {
+            text: root.label;
+            tooltipvisible: ta.has-hover;
+            clip: false;
+            x: parent.width + 6px;  
+            y: (root.height - self.height) / 2; 
+            z: 10;                                
+        }
 }
 
 export component Sidebar inherits Rectangle {
@@ -47,6 +50,9 @@ export component Sidebar inherits Rectangle {
     callback select(int);
     width: 88px;
     background: Theme.bg_light;
+    z: 10; 
+    clip: false;
+
     VerticalLayout {
         spacing: 6px;
         padding: 8px;
