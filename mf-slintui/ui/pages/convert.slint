@@ -1,15 +1,28 @@
 import { Theme } from "../Theme/Theme.slint";
 
-export component ConvertPage inherits Rectangle  {
+export component ConvertPage inherits Rectangle {
     background: Theme.surface;
     horizontal-stretch: 1;
     vertical-stretch: 1;
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: 8px;
+    VerticalLayout {
+        Rectangle {
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-top: 8px;
+            background: Theme.surface;
+            horizontal-stretch: 1;
+            vertical-stretch: 1;
+        }
+    }
 
-    Text {
-        text: "Convert Page";
-        color: Theme.text;
-        font-size: 18px;
-        horizontal-alignment: center;
-        vertical-alignment: top;
+    HorizontalLayout {
+        Rectangle {
+            background: Theme.bg_light;
+            horizontal-stretch: 1;
+            height: 40px;
+        }
     }
 }

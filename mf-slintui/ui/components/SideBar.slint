@@ -7,7 +7,7 @@ component SidebarItem inherits Rectangle {
     in property <bool> selected: false;
     callback clicked();
     height: 64px;
-    background: selected ? Theme.surface : transparent;
+    background: selected || ta.has-hover ? Theme.surface : transparent;
     border-radius: Theme.radius;
     ta := TouchArea {
         clicked => {
@@ -29,20 +29,18 @@ component SidebarItem inherits Rectangle {
                 source: root.icon;
                 width: 24px;
                 height: 24px;
-                x: (parent.width - self.width) / 2;   
-        opacity: selected ? 1.0 : (is_hovered ? 0.95 : 0.85);
+                x: (parent.width - self.width) / 2;
+                opacity: selected ? 1.0 : (is_hovered ? 0.95 : 0.85);
             }
         }
     }
 
-    tooltip := Tooltip {
-            text: root.label;
-            tooltipvisible: ta.has-hover;
-            clip: false;
-            x: parent.width + 6px;  
-            y: (root.height - self.height) / 2; 
-            z: 10;                                
-        }
+    text := Text {
+        text: root.label;
+        height: 30px;
+        y: 45px;
+        z: 10;
+    }
 }
 
 export component Sidebar inherits Rectangle {
@@ -50,9 +48,8 @@ export component Sidebar inherits Rectangle {
     callback select(int);
     width: 88px;
     background: Theme.bg_light;
-    z: 10; 
     clip: false;
-
+    z: 10;
     VerticalLayout {
         spacing: 6px;
         padding: 8px;
@@ -61,7 +58,6 @@ export component Sidebar inherits Rectangle {
             font-weight: 700;
             color: Theme.text;
             horizontal-alignment: center;
-            padding-bottom: 6px;
         }
 
         SidebarItem {
