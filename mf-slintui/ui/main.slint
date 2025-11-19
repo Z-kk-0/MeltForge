@@ -4,8 +4,8 @@ import { PluginsPage } from "pages/plugins.slint";
 import { ConvertPage } from "pages/convert.slint";
 
 export component MainWindow inherits Window {
-    width: 1000px;
-    height: 650px;
+    vertical-stretch: 1;
+    horizontal-stretch: 1;
     background: Theme.bg;
     title: "Meltforge";
     property <int> current_page: 0;
