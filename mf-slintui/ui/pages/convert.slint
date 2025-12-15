@@ -1,4 +1,5 @@
 import { Theme } from "../Theme/Theme.slint";
+import { ButtonPrimary } from "../components/buttonprimary.slint";
 
 export component ConvertPage inherits Rectangle {
     background: Theme.surface;
@@ -23,6 +24,16 @@ export component ConvertPage inherits Rectangle {
             background: Theme.bg_light;
             horizontal-stretch: 1;
             height: 40px;
+            HorizontalLayout {
+                padding-right: 12px;
+                Rectangle {
+                    horizontal-stretch: 1;
+                }
+
+                ButtonPrimary {
+                    label: "convert";
+                }
+            }
         }
     }
 }

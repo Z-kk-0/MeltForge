@@ -1,5 +1,4 @@
 import { Theme } from "../Theme/Theme.slint";
-import { Tooltip } from "Tooltip.slint";
 
 component SidebarItem inherits Rectangle {
     in property <string> label;
@@ -22,6 +21,7 @@ component SidebarItem inherits Rectangle {
     VerticalLayout {
         padding-top: 8px;
         padding-bottom: 6px;
+        spacing: 4px;
         Rectangle {
             height: parent.height / 2;
             horizontal-stretch: 1;
@@ -30,19 +30,17 @@ component SidebarItem inherits Rectangle {
                 width: 24px;
                 height: 24px;
                 x: (parent.width - self.width) / 2;   
-        opacity: selected ? 1.0 : (is_hovered ? 0.95 : 0.85);
+                opacity: selected ? 1.0 : (is_hovered ? 0.95 : 0.85);
             }
         }
-    }
-
-    tooltip := Tooltip {
+        Text {
             text: root.label;
-            tooltipvisible: ta.has-hover;
-            clip: false;
-            x: parent.width + 6px;  
-            y: (root.height - self.height) / 2; 
-            z: 10;                                
+            font-size: 11px;
+            horizontal-alignment: center;
+            color: selected ? Theme.text : Theme.text_muted;
+            opacity: selected ? 1.0 : (is_hovered ? 0.95 : 0.85);
         }
+    }
 }
 
 export component Sidebar inherits Rectangle {
