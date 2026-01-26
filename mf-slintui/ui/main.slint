@@ -4,13 +4,18 @@ import { PluginsPage } from "pages/plugins.slint";
 import { ConvertPage } from "pages/convert.slint";
 
 export component MainWindow inherits Window {
+
+    min-width: 960px;
+    min-height: 600px;
     vertical-stretch: 1;
     horizontal-stretch: 1;
     background: Theme.bg;
     title: "Meltforge";
+    in property <string> app_version: "";
     property <int> current_page: 0;
     HorizontalLayout {
         Sidebar {
+            app_version: root.app_version;
             clip: false;
             current: root.current_page;
             select(i) => {
@@ -22,3 +27,5 @@ export component MainWindow inherits Window {
         if root.current_page == 1: PluginsPage { }
     }
 }
+
+

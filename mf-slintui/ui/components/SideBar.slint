@@ -44,6 +44,7 @@ component SidebarItem inherits Rectangle {
 }
 
 export component Sidebar inherits Rectangle {
+    in property <string> app_version;
     in property <int> current: 0;
     callback select(int);
     width: 88px;
@@ -86,7 +87,7 @@ export component Sidebar inherits Rectangle {
         }
 
         Text {
-            text: "v0.1";
+            text: "v" + root.app_version;
             font-size: 10px;
             color: Theme.text_muted;
             horizontal-alignment: center;
@@ -94,3 +95,5 @@ export component Sidebar inherits Rectangle {
         }
     }
 }
+
+

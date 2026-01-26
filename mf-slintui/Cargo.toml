@@ -6,6 +6,7 @@ build = "build.rs"
 
 [dependencies]
 slint = { workspace = true }
+mf-core = { path = "../mf-core" }  
 
 [build-dependencies]
 slint-build = { workspace = true }

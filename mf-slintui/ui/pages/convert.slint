@@ -17,23 +17,21 @@ export component ConvertPage inherits Rectangle {
             horizontal-stretch: 1;
             vertical-stretch: 1;
         }
-    }
 
-    HorizontalLayout {
         Rectangle {
             background: Theme.bg_light;
             horizontal-stretch: 1;
-            height: 40px;
-            HorizontalLayout {
-                padding-right: 12px;
-                Rectangle {
-                    horizontal-stretch: 1;
+            height: 48px;
+            VerticalLayout {
+                Rectangle { vertical-stretch: 1; }
+                HorizontalLayout {
+                    Rectangle { horizontal-stretch: 1; }
+                    ButtonPrimary { label: "convert"; }
+                    padding-right: 20px;
                 }
-
-                ButtonPrimary {
-                    label: "convert";
-                }
+                Rectangle { vertical-stretch: 1; }
             }
         }
     }
 }
+

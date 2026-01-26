@@ -2753,6 +2753,7 @@ dependencies = [
 name = "mf-slintui"
 version = "0.1.0"
 dependencies = [
+ "mf-core",
  "slint",
  "slint-build",
 ]

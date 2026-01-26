@@ -95,6 +95,7 @@ fn ensure_readable(path: &Path) -> Result<(), IoError> {
     match File::open(path) {
         Ok(_) => Ok(()),
         Err(e) => match e.kind() {
+            ErrorKind::NotFound => Err(IoError::NotFound(path.to_path_buf())),
             ErrorKind::PermissionDenied => Err(IoError::PermissionDenied(path.to_path_buf())),
             _ => Err(IoError::ReadError(path.to_path_buf())),
         },

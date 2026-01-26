@@ -30,6 +30,7 @@ pub fn run_convert_job(job: ConvertJob) -> Result<i32, MeltforgeError> {
                     IoError::MissingParent(p) => {
                         eprintln!("Target directory not found: {}", p.display())
                     }
+                    IoError::NotFound(p) => eprintln!("File not found: {}", p.display()),
                     IoError::PermissionDenied(p) => eprintln!("No permission for: {}", p.display()),
                     _ => {}
                 }

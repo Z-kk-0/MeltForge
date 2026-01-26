@@ -73,6 +73,9 @@ pub enum IoError {
     #[error("write error: {0}")]
     WriteError(PathBuf),
 
+    #[error("not found: {0}")]
+    NotFound(PathBuf),
+
     #[error("permission denied: {0}")]
     PermissionDenied(PathBuf),
 
