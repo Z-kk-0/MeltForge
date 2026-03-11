@@ -13,6 +13,7 @@ export component MainWindow inherits Window {
     background: Theme.bg;
     title: "Meltforge";
     in property <string> app_version: "";
+    in-out property <[string]> selected_files: [];
     property <int> current_page: 0;
     HorizontalLayout {
         Sidebar {

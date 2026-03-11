@@ -29,7 +29,7 @@ export component ConvertPage inherits Rectangle {
                 HorizontalLayout {
                     ButtonPrimary { 
                         label: "Add File"; 
-                        clicked => { root.add_file_clicked }
+                        clicked => { root.add_file_clicked() }
                 }
                     padding-left: 20px;
                     Rectangle { horizontal-stretch: 1; }
