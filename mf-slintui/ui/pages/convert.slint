@@ -2,6 +2,8 @@ import { Theme } from "../Theme/Theme.slint";
 import { ButtonPrimary } from "../components/buttonprimary.slint";
 
 export component ConvertPage inherits Rectangle {
+    callback add_file_clicked();
+
     background: Theme.surface;
     horizontal-stretch: 1;
     vertical-stretch: 1;
@@ -25,7 +27,10 @@ export component ConvertPage inherits Rectangle {
             VerticalLayout {
                 Rectangle { vertical-stretch: 1; }
                 HorizontalLayout {
-                    ButtonPrimary { label: "Add File"; }
+                    ButtonPrimary { 
+                        label: "Add File"; 
+                        clicked => { root.add_file_clicked }
+                }
                     padding-left: 20px;
                     Rectangle { horizontal-stretch: 1; }
                     ButtonPrimary { label: "convert"; }

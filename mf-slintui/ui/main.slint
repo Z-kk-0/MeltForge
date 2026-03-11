@@ -4,6 +4,7 @@ import { PluginsPage } from "pages/plugins.slint";
 import { ConvertPage } from "pages/convert.slint";
 
 export component MainWindow inherits Window {
+    callback add_file_clicked;
 
     min-width: 960px;
     min-height: 600px;
@@ -23,7 +24,7 @@ export component MainWindow inherits Window {
             }
         }
 
-        if root.current_page == 0: ConvertPage { }
+        if root.current_page == 0: ConvertPage { add_file_clicked => { root.add_file_clicked(); } }
         if root.current_page == 1: PluginsPage { }
     }
 }
