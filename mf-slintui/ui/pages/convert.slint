@@ -1,9 +1,11 @@
 import { Theme } from "../Theme/Theme.slint";
 import { ButtonPrimary } from "../components/buttonprimary.slint";
+import { FileItemList } from "../components/fileitemlist.slint";
 
 export component ConvertPage inherits Rectangle {
     callback add_file_clicked();
-
+    callback convert_clicked();
+    in-out property <[string]> files: [];
     background: Theme.surface;
     horizontal-stretch: 1;
     vertical-stretch: 1;
@@ -18,6 +20,9 @@ export component ConvertPage inherits Rectangle {
             background: Theme.surface;
             horizontal-stretch: 1;
             vertical-stretch: 1;
+            FileItemList {
+                files: files;
+            }
         }
 
         Rectangle {
@@ -25,20 +30,37 @@ export component ConvertPage inherits Rectangle {
             horizontal-stretch: 1;
             height: 48px;
             VerticalLayout {
-                Rectangle { vertical-stretch: 1; }
-                HorizontalLayout {
-                    ButtonPrimary { 
-                        label: "Add File"; 
-                        clicked => { root.add_file_clicked() }
+                Rectangle {
+                    vertical-stretch: 1;
                 }
+
+                HorizontalLayout {
+                    ButtonPrimary {
+                        label: "Add File";
+                        clicked => {
+                            root.add_file_clicked()
+                        }
+                    }
+
                     padding-left: 20px;
-                    Rectangle { horizontal-stretch: 1; }
-                    ButtonPrimary { label: "convert"; }
+                    Rectangle {
+                        horizontal-stretch: 1;
+                    }
+
+                    ButtonPrimary {
+                        label: "convert";
+                        clicked => {
+                            root.convert_clicked()
+                        }
+                    }
+
                     padding-right: 20px;
                 }
-                Rectangle { vertical-stretch: 1; }
+
+                Rectangle {
+                    vertical-stretch: 1;
+                }
             }
         }
     }
 }
-

@@ -1,9 +1,13 @@
 slint::include_modules!();
+use slint::Model; 
 mod services;
 mod util;
+use mf_core::{ format::FormatType, job::ConvertJob};
 use slint::{ModelRc, SharedString, VecModel};
-use std::rc::Rc;
+use std::{path::{PathBuf}, rc::Rc};
 use util::filechooser;
+
+use crate::util::convert::run_multi_convert_job;
 
 fn main() {
     let app = MainWindow::new().unwrap();
@@ -21,6 +25,28 @@ fn main() {
         })
         .unwrap();
     });
+
+    let app_weak = app.as_weak();
+    app.on_convert_clicked( move || {
+        let app = app_weak.unwrap();
+        let ui_files = app.get_selected_files();
+        let convert_jobs:  Vec<ConvertJob> = ui_files.iter()
+        .map(|file| {
+            let input = PathBuf::from(file.as_str());
+            ConvertJob {
+                input: input.clone(),
+                output: None,
+                format_type: FormatType::JPEG
+            }
+        })
+        .collect();
+        match run_multi_convert_job(convert_jobs, None) {
+            Ok(failures) if failures == 0 => println!("Conversion success"),
+            Ok(failures) => println!("{} Conversion failures", failures), 
+            Err(error) => eprintln!("Error: {}", error)
+        }
+    });
+
 
     app.run().unwrap();
 }

@@ -1,0 +1,24 @@
+import { Theme } from "../Theme/Theme.slint";
+export component FileItem inherits Rectangle {
+    height: 48px;
+    border-radius: 8px;
+    background: Theme.secondary;
+
+    in-out property <string> file-name;
+
+    HorizontalLayout {
+        padding-left: 12px;
+        padding-right: 12px;
+        spacing: 10px;
+        alignment: center;
+
+        Text {
+            text: file-name; 
+            font-size: 13px;
+            color: Theme.text_muted;
+            overflow: elide;
+            vertical-alignment: center;
+            horizontal-stretch: 1; 
+        }
+    }
+}

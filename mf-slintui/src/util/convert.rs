@@ -1,0 +1,65 @@
+use mf_core::convert::convert;
+use mf_core::format::FormatType;
+use mf_core::job::ConvertJob;
+use mf_core::validation::error::{FormatError, IoError, MeltforgeError};
+use rayon::ThreadPoolBuilder;
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
+use std::path::PathBuf;
+use std::usize;
+
+pub fn run_convert_job(job: ConvertJob) -> Result<i32, MeltforgeError> {
+    println!("input : {}", job.input.display());
+    println!("to    : {:?}", job.format_type);
+    if let Some(p) = &job.output {
+        println!("output: {}", p.display());
+    }
+
+    match convert(job) {
+        Ok(out_path) => {
+            println!("Conversion was successful");
+            println!("{}", out_path.display());
+            Ok(0)
+        }
+        Err(e) => {
+            eprintln!("Error: {e}");
+            if let MeltforgeError::Io(ioe) = &e {
+                match ioe {
+                    IoError::AlreadyExists(p) => eprintln!("File already exists: {}", p.display()),
+                    IoError::MissingParent(p) => {
+                        eprintln!("Target directory not found: {}", p.display())
+                    }
+                    IoError::NotFound(p) => eprintln!("File not found: {}", p.display()),
+                    IoError::PermissionDenied(p) => eprintln!("No permission for: {}", p.display()),
+                    _ => {}
+                }
+            }
+            Ok(e.exit_code().into())
+        }
+    }
+}
+
+pub fn run_multi_convert_job(jobs: Vec<ConvertJob>, threads: Option<usize>) -> Result<usize, MeltforgeError> {
+    let pool = ThreadPoolBuilder::new()
+        .num_threads(threads.unwrap_or_else(num_cpus))
+        .build()
+        .map_err(|e| MeltforgeError::Io(IoError::InvalidOutput(
+            format!("Failed to create thread pool: {}", e)
+        )))?;
+
+    let failures = pool.install(|| {
+        jobs.into_par_iter()
+            .map(|job| match run_convert_job(job) {
+                Ok(0) => 0,
+                Ok(_) | Err(_) => 1,
+            })
+            .sum::<usize>()
+    });
+
+    Ok(failures)
+}
+
+fn num_cpus() -> usize {
+    std::thread::available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(1)
+}

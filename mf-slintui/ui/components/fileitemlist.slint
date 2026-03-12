@@ -1,0 +1,15 @@
+import { ListView } from "std-widgets.slint";
+import { FileItem } from "fileitem.slint";
+export component FileItemList inherits Rectangle{
+    background: transparent;
+    in-out property <[string]> files;
+
+    VerticalLayout {
+        ListView {
+            for file in files: FileItem {
+                file-name: file;
+            }
+        }
+    }
+
+}

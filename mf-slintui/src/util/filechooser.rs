@@ -5,6 +5,9 @@ use std::path::PathBuf;
 pub async fn open_dialog() -> Result<Option<PathBuf>, MeltforgeError> {
     let path = DialogBuilder::file()
         .set_location("~/Desktop")
+        .add_filter("Pictures", &["png", "jpg", "jpeg"])
+        .add_filter("PNG", &["png"])
+        .add_filter("JPEG", &["jpg", "jpeg"])
         .open_single_file()
         .show()
         .map_err(map_dialog_err)?;
