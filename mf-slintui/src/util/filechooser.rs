@@ -10,7 +10,7 @@ pub async fn open_dialog() -> Result<Option<PathBuf>, MeltforgeError> {
         .add_filter("JPEG", &["jpg", "jpeg"])
         .open_single_file()
         .show()
-        .map_err(map_dialog_err)?;
+        .map_err(map_dialog_error)?;
 
     let Some(path) = path else {
         return Ok(None);
@@ -23,7 +23,7 @@ pub async fn open_dialog() -> Result<Option<PathBuf>, MeltforgeError> {
         .confirm()
         .spawn()
         .await
-        .map_err(map_dialog_err)?;
+        .map_err(map_dialog_error)?;
 
     if yes {
         Ok(Some(path))
@@ -32,13 +32,13 @@ pub async fn open_dialog() -> Result<Option<PathBuf>, MeltforgeError> {
     }
 }
 
-fn map_dialog_err(err: DialogError) -> MeltforgeError {
-    let msg = match err {
-        DialogError::Io(e) => format!("native dialog I/O error: {}", e),
-        DialogError::Utf8(e) => format!("native dialog utf-8 error: {}", e),
+fn map_dialog_error(dialog_error: DialogError) -> MeltforgeError {
+    let message = match dialog_error {
+        DialogError::Io(error) => format!("native dialog I/O error: {}", error),
+        DialogError::Utf8(error) => format!("native dialog utf-8 error: {}", error),
         DialogError::MissingDep => "native dialog dependency missing".to_string(),
-        DialogError::Killed(sig) => format!("native dialog subprocess killed: {:?}", sig),
-        DialogError::Other(e) => format!("native dialog error: {}", e),
+        DialogError::Killed(signal) => format!("native dialog subprocess killed: {:?}", signal),
+        DialogError::Other(error) => format!("native dialog error: {}", error),
     };
-    MeltforgeError::Io(IoError::InvalidOutput(msg))
+    MeltforgeError::Io(IoError::InvalidOutput(message))
 }

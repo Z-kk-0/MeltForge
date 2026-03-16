@@ -1,5 +1,5 @@
 use std::{
-    fs::{self, File},
+    fs,
     io::ErrorKind,
     path::Path,
 };
@@ -10,18 +10,16 @@ use crate::{
     validation::error::{FormatError, InputError, IoError, MeltforgeError},
 };
 
-pub fn validate_job(cj: &ConvertJob) -> Result<(), MeltforgeError> {
-    // check if paths are readable and
-    validate_path(&cj.input)?;
-    ensure_readable(&cj.input)?;
+pub fn validate_job(job: &ConvertJob) -> Result<(), MeltforgeError> {
+    validate_path(&job.input)?;
+    ensure_readable(&job.input)?;
 
-    // validate input format and compatibility(will be excluded when plugins are available)
-    let input_fmt = validate_input_format(&cj.input)?;
-    validate_compatibility(input_fmt, cj.format_type)?;
+    // validate input format and compatibility (will be excluded when plugins are available)
+    let input_format = validate_input_format(&job.input)?;
+    validate_compatibility(input_format, job.format_type)?;
 
-    // check output if set
-    if let Some(out) = &cj.output {
-        validate_output_dir(out)?;
+    if let Some(output) = &job.output {
+        validate_output_dir(output)?;
     }
 
     Ok(())
@@ -39,19 +37,19 @@ fn validate_input_format(path: &Path) -> Result<FormatType, FormatError> {
 }
 
 pub fn detect_input_format(path: &Path) -> Result<FormatType, FormatError> {
-    let ext = path
+    let extension = path
         .extension()
-        .and_then(|s| s.to_str())
-        .map(|s| s.to_lowercase())
+        .and_then(|os_str| os_str.to_str())
+        .map(|ext_str| ext_str.to_lowercase())
         .ok_or_else(|| FormatError::UnsupportedInput("<no extension>".into()))?;
 
-    let fmt = match ext.as_str() {
+    let format = match extension.as_str() {
         "png" => FormatType::PNG,
         "jpg" | "jpeg" => FormatType::JPEG,
-        _ => return Err(FormatError::UnsupportedInput(ext)),
+        _ => return Err(FormatError::UnsupportedInput(extension)),
     };
 
-    Ok(fmt)
+    Ok(format)
 }
 
 pub fn validate_compatibility(input: FormatType, output: FormatType) -> Result<(), FormatError> {
@@ -69,14 +67,14 @@ fn validate_output_dir(output_path: &Path) -> Result<(), IoError> {
     if output_path.exists() {
         return Err(IoError::AlreadyExists(output_path.to_path_buf()).into());
     }
-    // defaulting to used directory for User friendly expierience
-    let dir = output_path.parent().unwrap_or(Path::new("."));
+    // defaulting to used directory for user-friendly experience
+    let parent_dir = output_path.parent().unwrap_or(Path::new("."));
 
-    if !dir.exists() {
+    if !parent_dir.exists() {
         return Err(IoError::MissingParent(output_path.to_path_buf()));
     }
 
-    let test_path = dir.join(".meltforge_write_test");
+    let test_path = parent_dir.join(".meltforge_write_test");
 
     match fs::OpenOptions::new()
         .write(true)
@@ -87,14 +85,14 @@ fn validate_output_dir(output_path: &Path) -> Result<(), IoError> {
             let _ = fs::remove_file(&test_path);
             Ok(())
         }
-        Err(_) => Err(IoError::PermissionDenied(dir.to_path_buf())),
+        Err(_) => Err(IoError::PermissionDenied(parent_dir.to_path_buf())),
     }
 }
 
 fn ensure_readable(path: &Path) -> Result<(), IoError> {
-    match File::open(path) {
+    match fs::File::open(path) {
         Ok(_) => Ok(()),
-        Err(e) => match e.kind() {
+        Err(error) => match error.kind() {
             ErrorKind::NotFound => Err(IoError::NotFound(path.to_path_buf())),
             ErrorKind::PermissionDenied => Err(IoError::PermissionDenied(path.to_path_buf())),
             _ => Err(IoError::ReadError(path.to_path_buf())),

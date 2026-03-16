@@ -16,37 +16,40 @@ pub struct RawCapabilities {
     outputs: Vec<String>,
 }
 
-pub fn validate_plugin(raw: RawManifest, path: PathBuf) -> Result<Manifest, ManifestScanError> {
-    if raw.name.trim().is_empty() {
+pub fn validate_plugin(
+    raw_manifest: RawManifest,
+    path: PathBuf,
+) -> Result<Manifest, ManifestScanError> {
+    if raw_manifest.name.trim().is_empty() {
         return Err(ManifestScanError::Invalid {
             path,
-            msg: "name must not be empty".into(),
+            message: "name must not be empty".into(),
         });
     }
-    if raw.version.trim().is_empty() {
+    if raw_manifest.version.trim().is_empty() {
         return Err(ManifestScanError::Invalid {
             path,
-            msg: "version must not be empty".into(),
+            message: "version must not be empty".into(),
         });
     }
-    if raw.capabilities.inputs.is_empty() {
+    if raw_manifest.capabilities.inputs.is_empty() {
         return Err(ManifestScanError::Invalid {
             path,
-            msg: "capabilities.inputs must not be empty".into(),
+            message: "capabilities.inputs must not be empty".into(),
         });
     }
-    if raw.capabilities.outputs.is_empty() {
+    if raw_manifest.capabilities.outputs.is_empty() {
         return Err(ManifestScanError::Invalid {
             path,
-            msg: "capabilities.outputs must not be empty".into(),
+            message: "capabilities.outputs must not be empty".into(),
         });
     }
 
     Ok(Manifest {
         path,
-        name: raw.name,
-        version: raw.version,
-        inputs: raw.capabilities.inputs,
-        outputs: raw.capabilities.outputs,
+        name: raw_manifest.name,
+        version: raw_manifest.version,
+        inputs: raw_manifest.capabilities.inputs,
+        outputs: raw_manifest.capabilities.outputs,
     })
 }

@@ -2,12 +2,12 @@ slint::include_modules!();
 use slint::Model;
 mod services;
 mod util;
-use mf_core::{format::FormatType, job::ConvertJob};
+use mf_core::{format::FormatType, job::ConvertJob, message::Message};
 use slint::{ModelRc, SharedString, VecModel};
 use std::{path::PathBuf, rc::Rc};
 use util::filechooser;
 
-use crate::util::convert::{run_convert, ConvertMessage};
+use crate::util::convert::run_convert;
 
 fn main() {
     let app = MainWindow::new().unwrap();
@@ -32,32 +32,29 @@ fn main() {
         let ui_files = app.get_selected_files();
         let convert_jobs: Vec<ConvertJob> = ui_files
             .iter()
-            .map(|file| {
-                let input = PathBuf::from(file.as_str());
-                ConvertJob {
-                    input,
-                    output: None,
-                    format_type: FormatType::JPEG,
-                }
+            .map(|file| ConvertJob {
+                input: PathBuf::from(file.as_str()),
+                output: None,
+                format_type: FormatType::JPEG,
             })
             .collect();
 
         match run_convert(convert_jobs, None) {
             Ok(messages) => handle_messages(messages),
-            Err(e) => eprintln!("Error: {}", e),
+            Err(error) => eprintln!("[error] {}", error),
         }
     });
 
     app.run().unwrap();
 }
 
-fn handle_messages(messages: Vec<ConvertMessage>) {
-    for msg in messages {
-        match msg {
-            ConvertMessage::Info(text) => println!("[info]    {}", text),
-            ConvertMessage::Success(text) => println!("[success] {}", text),
-            ConvertMessage::Warning(text) => println!("[warning] {}", text),
-            ConvertMessage::Error(text) => eprintln!("[error]   {}", text),
+fn handle_messages(messages: Vec<Message>) {
+    for message in messages {
+        match message {
+            Message::Info(text) => println!("[info]    {}", text),
+            Message::Success(text) => println!("[success] {}", text),
+            Message::Warning(text) => println!("[warning] {}", text),
+            Message::Error(text) => eprintln!("[error]   {}", text),
         }
     }
 }

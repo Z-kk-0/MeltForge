@@ -1,14 +1,17 @@
 use mf_core::plugin::scan_plugins;
 use mf_core::validation::error::MeltforgeError;
 
-pub fn print_scanned_plugins(dir: &str) -> Result<(), MeltforgeError> {
-    let plugins = scan_plugins(dir)?;
-    println!("Plugins found: {}", plugins.len());
+use crate::util::messages::print_messages;
 
-    for man in &plugins {
-        println!("- {} v{} at {}", man.name, man.version, man.path.display());
-        println!("  inputs:  {:?}", man.inputs);
-        println!("  outputs: {:?}", man.outputs);
+pub fn print_scanned_plugins(plugins_dir: &str) -> Result<(), MeltforgeError> {
+    let (manifests, messages) = scan_plugins(plugins_dir).map_err(MeltforgeError::from)?;
+    print_messages(messages);
+
+    for manifest in &manifests {
+        println!(
+            "  inputs: {:?}  outputs: {:?}",
+            manifest.inputs, manifest.outputs
+        );
     }
 
     Ok(())
