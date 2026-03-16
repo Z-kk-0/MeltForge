@@ -1,24 +1,68 @@
+import { ComboBox } from "std-widgets.slint";
 import { Theme } from "../Theme/Theme.slint";
+import { FileEntry } from "../types.slint";
+
 export component FileItem inherits Rectangle {
-    height: 48px;
-    border-radius: 8px;
-    background: Theme.secondary;
+    border-radius: Theme.radius;
+    background: Theme.bg_light;
+    border-width: 1px;
+    border-color: Theme.divider;
+    clip: true;
 
-    in-out property <string> file-name;
+    in-out property <FileEntry> entry;
+    callback format-changed(string);
 
-    HorizontalLayout {
-        padding-left: 12px;
-        padding-right: 12px;
-        spacing: 10px;
-        alignment: center;
+    VerticalLayout {
+        spacing: 0px;
 
-        Text {
-            text: file-name; 
-            font-size: 13px;
-            color: Theme.text_muted;
-            overflow: elide;
-            vertical-alignment: center;
-            horizontal-stretch: 1; 
+        // Image preview area — square based on card width
+        Rectangle {
+            height: root.width;
+            background: Theme.surface;
+
+            Image {
+                source: @image-url("../icons/image-square-svgrepo-com.svg");
+                width: parent.width * 0.45;
+                height: parent.width * 0.45;
+                x: (parent.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+                colorize: Theme.divider;
+            }
+        }
+
+        // Divider
+        Rectangle { height: 1px; background: Theme.divider; }
+
+        // Filename
+        Rectangle {
+            height: 30px;
+            Text {
+                x: 8px;
+                width: parent.width - 16px;
+                text: entry.path;
+                font-size: 11px;
+                color: Theme.text_muted;
+                overflow: elide;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+
+        // Divider
+        Rectangle { height: 1px; background: Theme.divider; }
+
+        // Format selector
+        Rectangle {
+            height: 42px;
+            ComboBox {
+                x: 8px;
+                y: 5px;
+                width: parent.width - 16px;
+                height: 32px;
+                model: entry.available-formats;
+                current-value: entry.selected-format;
+                selected(v) => { root.format-changed(v); }
+            }
         }
     }
 }

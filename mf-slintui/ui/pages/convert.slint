@@ -1,18 +1,20 @@
 import { Theme } from "../Theme/Theme.slint";
 import { ButtonPrimary } from "../components/buttonprimary.slint";
 import { FileItemList } from "../components/fileitemlist.slint";
+import { FileEntry } from "../types.slint";
 
 export component ConvertPage inherits Rectangle {
     callback add_file_clicked();
     callback convert_clicked();
-    in-out property <[string]> files: [];
+    callback format-changed(int, string);
+    in-out property <[FileEntry]> files: [];
+
     background: Theme.surface;
     horizontal-stretch: 1;
     vertical-stretch: 1;
-    padding-left: 16px;
-    padding-right: 16px;
-    padding-top: 8px;
+
     VerticalLayout {
+        // File list
         Rectangle {
             padding-left: 16px;
             padding-right: 16px;
@@ -20,46 +22,38 @@ export component ConvertPage inherits Rectangle {
             background: Theme.surface;
             horizontal-stretch: 1;
             vertical-stretch: 1;
+
             FileItemList {
                 files: files;
+                format-changed(i, fmt) => { root.format-changed(i, fmt); }
             }
         }
 
+        // Action bar
         Rectangle {
             background: Theme.bg_light;
             horizontal-stretch: 1;
-            height: 48px;
+            height: 56px;
+
             VerticalLayout {
-                Rectangle {
-                    vertical-stretch: 1;
-                }
-
+                Rectangle { vertical-stretch: 1; }
                 HorizontalLayout {
-                    ButtonPrimary {
-                        label: "Add File";
-                        clicked => {
-                            root.add_file_clicked()
-                        }
-                    }
-
                     padding-left: 20px;
-                    Rectangle {
-                        horizontal-stretch: 1;
-                    }
+                    padding-right: 20px;
 
                     ButtonPrimary {
-                        label: "convert";
-                        clicked => {
-                            root.convert_clicked()
-                        }
+                        label: "Add Files";
+                        clicked => { root.add_file_clicked() }
                     }
 
-                    padding-right: 20px;
-                }
+                    Rectangle { horizontal-stretch: 1; }
 
-                Rectangle {
-                    vertical-stretch: 1;
+                    ButtonPrimary {
+                        label: "Convert";
+                        clicked => { root.convert_clicked() }
+                    }
                 }
+                Rectangle { vertical-stretch: 1; }
             }
         }
     }

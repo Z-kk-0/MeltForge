@@ -2773,7 +2773,7 @@ dependencies = [
 
 [[package]]
 name = "mf-cli"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "clap",
  "mf-core",
@@ -2781,7 +2781,7 @@ dependencies = [
 
 [[package]]
 name = "mf-core"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "image",
  "rayon",

@@ -2,10 +2,12 @@ import { Theme } from "Theme/Theme.slint";
 import { Sidebar } from "components/SideBar.slint";
 import { PluginsPage } from "pages/plugins.slint";
 import { ConvertPage } from "pages/convert.slint";
+import { FileEntry } from "types.slint";
 
 export component MainWindow inherits Window {
     callback add_file_clicked;
     callback convert_clicked();
+    callback format-changed(int, string);
 
     min-width: 960px;
     min-height: 600px;
@@ -14,21 +16,23 @@ export component MainWindow inherits Window {
     background: Theme.bg;
     title: "Meltforge";
     in property <string> app_version: "";
-    in-out property <[string]> selected_files: [];
+    in-out property <[FileEntry]> files: [];
     property <int> current_page: 0;
+
     HorizontalLayout {
         Sidebar {
             app_version: root.app_version;
             clip: false;
             current: root.current_page;
-            select(i) => {
-                root.current_page = i;
-            }
+            select(i) => { root.current_page = i; }
         }
 
-        if root.current_page == 0: ConvertPage { add_file_clicked => { root.add_file_clicked(); }  files: selected_files; convert_clicked => { root.convert_clicked() }}
+        if root.current_page == 0: ConvertPage {
+            add_file_clicked => { root.add_file_clicked(); }
+            files: root.files;
+            format-changed(i, fmt) => { root.format-changed(i, fmt); }
+            convert_clicked => { root.convert_clicked() }
+        }
         if root.current_page == 1: PluginsPage { }
     }
 }
-
-

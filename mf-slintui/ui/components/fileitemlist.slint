@@ -1,15 +1,29 @@
-import { ListView } from "std-widgets.slint";
 import { FileItem } from "fileitem.slint";
-export component FileItemList inherits Rectangle{
-    background: transparent;
-    in-out property <[string]> files;
+import { FileEntry } from "../types.slint";
 
-    VerticalLayout {
-        ListView {
-            for file in files: FileItem {
-                file-name: file;
-            }
+export component FileItemList inherits Rectangle {
+    background: transparent;
+    in-out property <[FileEntry]> files;
+    callback format-changed(int, string);
+
+    private property <length> gap: 8px;
+    private property <length> card-w: 160px;
+    private property <length> card-h: card-w + 74px;
+    private property <float> cols: Math.max(1, Math.floor((root.width - gap) / (card-w + gap)));
+
+    Flickable {
+        width: root.width;
+        height: root.height;
+        viewport-width: root.width;
+        viewport-height: max(root.height, Math.ceil(files.length / cols) * (card-h + gap) + gap);
+
+        for entry[i] in files: FileItem {
+            x: Math.mod(i, cols) * (card-w + gap) + gap;
+            y: Math.floor(i / cols) * (card-h + gap) + gap;
+            width: card-w;
+            height: card-h;
+            entry: entry;
+            format-changed(fmt) => { root.format-changed(i, fmt); }
         }
     }
-
 }
