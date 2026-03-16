@@ -2,31 +2,31 @@ use mf_core::validation::error::{IoError, MeltforgeError};
 use native_dialog::{DialogBuilder, Error as DialogError, MessageLevel};
 use std::path::PathBuf;
 
-pub async fn open_dialog() -> Result<Option<PathBuf>, MeltforgeError> {
-    let path = DialogBuilder::file()
+pub async fn open_dialog() -> Result<Option<Vec<PathBuf>>, MeltforgeError> {
+    let paths = DialogBuilder::file()
         .set_location("~/Desktop")
         .add_filter("Pictures", &["png", "jpg", "jpeg"])
         .add_filter("PNG", &["png"])
         .add_filter("JPEG", &["jpg", "jpeg"])
-        .open_single_file()
+        .open_multiple_file()
         .show()
         .map_err(map_dialog_error)?;
 
-    let Some(path) = path else {
-        return Ok(None);
-    };
+    if paths.is_empty() {
+        return  Ok(None);
+    }
 
     let yes = DialogBuilder::message()
         .set_level(MessageLevel::Info)
-        .set_title("Do you want to open the file?")
-        .set_text(format!("{:#?}", path))
+        .set_title("Do you want to open the files?")
+        .set_text(format!("{:#?}", paths))
         .confirm()
         .spawn()
         .await
         .map_err(map_dialog_error)?;
 
     if yes {
-        Ok(Some(path))
+        Ok(Some(paths))
     } else {
         Ok(None)
     }

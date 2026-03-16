@@ -19,8 +19,10 @@ fn main() {
     app.on_add_file_clicked(move || {
         let files_model = files_model.clone();
         slint::spawn_local(async move {
-            if let Ok(Some(input_file)) = filechooser::open_dialog().await {
-                files_model.push(SharedString::from(input_file.to_string_lossy().as_ref()));
+            if let Ok(Some(input_files)) = filechooser::open_dialog().await {
+                for input_file in input_files {
+                    files_model.push(SharedString::from(input_file.to_string_lossy().as_ref()));
+                }
             }
         })
         .unwrap();
