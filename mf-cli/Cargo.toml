@@ -6,4 +6,3 @@ edition.workspace = true
 [dependencies]
 clap = { workspace = true, features = ["derive"] }
 mf-core = { path = "../mf-core" }  
-rayon = {workspace = true}

@@ -2777,7 +2777,6 @@ version = "0.3.0"
 dependencies = [
  "clap",
  "mf-core",
- "rayon",
 ]
 
 [[package]]
@@ -2785,6 +2784,7 @@ name = "mf-core"
 version = "0.3.0"
 dependencies = [
  "image",
+ "rayon",
  "serde",
  "thiserror 2.0.17",
  "toml 0.9.8",
@@ -2796,7 +2796,6 @@ version = "0.1.0"
 dependencies = [
  "mf-core",
  "native-dialog",
- "rayon",
  "slint",
  "slint-build",
 ]
