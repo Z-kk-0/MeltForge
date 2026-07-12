@@ -15,18 +15,19 @@ export component FileItem inherits Rectangle {
     VerticalLayout {
         spacing: 0px;
 
-        // Image preview area — square based on card width
+        // Image preview area square based on card width
         Rectangle {
             height: root.width;
             background: Theme.surface;
 
             Image {
-                source: @image-url("../icons/image-square-svgrepo-com.svg");
-                width: parent.width * 0.45;
-                height: parent.width * 0.45;
+                source: entry.is-image ? entry.image : @image-url("../icons/image-square-svgrepo-com.svg");
+                image-fit: contain;
+                width: entry.is-image ? parent.width : parent.width * 0.45;
+                height: entry.is-image ? parent.height : parent.width * 0.45;
                 x: (parent.width - self.width) / 2;
                 y: (parent.height - self.height) / 2;
-                colorize: Theme.divider;
+                colorize: entry.is-image ? transparent : Theme.divider;
             }
         }
 

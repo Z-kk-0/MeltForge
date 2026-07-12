@@ -8,6 +8,7 @@ export component ConvertPage inherits Rectangle {
     callback convert_clicked();
     callback format-changed(int, string);
     in-out property <[FileEntry]> files: [];
+    pure callback on_dropped_file(data-transfer);
 
     background: Theme.surface;
     horizontal-stretch: 1;
@@ -28,6 +29,7 @@ export component ConvertPage inherits Rectangle {
                 format-changed(i, fmt) => { root.format-changed(i, fmt); }
             }
         }
+   
 
         // Action bar
         Rectangle {

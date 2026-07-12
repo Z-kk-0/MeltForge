@@ -2,4 +2,12 @@ export struct FileEntry {
     path: string,
     selected-format: string,
     available-formats: [string],
+    is-image: bool,
+    image: image,
+}
+
+export struct ToastMessage {
+    kind: string,
+    title: string,
+    message: string,
 }

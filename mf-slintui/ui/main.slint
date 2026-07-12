@@ -2,12 +2,14 @@ import { Theme } from "Theme/Theme.slint";
 import { Sidebar } from "components/SideBar.slint";
 import { PluginsPage } from "pages/plugins.slint";
 import { ConvertPage } from "pages/convert.slint";
-import { FileEntry } from "types.slint";
+import { Toast } from "components/Toast.slint";
+import { FileEntry, ToastMessage } from "types.slint";
 
 export component MainWindow inherits Window {
     callback add_file_clicked;
     callback convert_clicked();
     callback format-changed(int, string);
+    callback dismiss-toast(int);
 
     min-width: 960px;
     min-height: 600px;
@@ -17,6 +19,7 @@ export component MainWindow inherits Window {
     title: "Meltforge";
     in property <string> app_version: "";
     in-out property <[FileEntry]> files: [];
+    in-out property <[ToastMessage]> toasts: [];
     property <int> current_page: 0;
 
     HorizontalLayout {
@@ -34,5 +37,24 @@ export component MainWindow inherits Window {
             convert_clicked => { root.convert_clicked() }
         }
         if root.current_page == 1: PluginsPage { }
+    }
+
+    // Toast overlay
+    Rectangle {
+        x: root.width - 416px;
+        y: 16px;
+        width: 400px;
+        height: root.height - 32px;
+        background: transparent;
+
+        VerticalLayout {
+            alignment: start;
+            spacing: Theme.gap;
+
+            for toast[i] in root.toasts: Toast {
+                toast: toast;
+                dismissed => { root.dismiss-toast(i); }
+            }
+        }
     }
 }
