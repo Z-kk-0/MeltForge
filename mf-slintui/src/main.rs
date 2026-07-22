@@ -1,13 +1,23 @@
 slint::include_modules!();
-use slint::{Model, platform::WindowEvent};
+use slint::{Model, Timer, language::AccessibleRole::Main, platform::WindowEvent};
 use i_slint_backend_winit::{EventResult, WinitWindowAccessor};
 mod util;
 use mf_core::{format::FormatType, job::ConvertJob, message::Message};
 use slint::{ModelRc, SharedString, VecModel};
-use std::{path::PathBuf, rc::Rc};
+use std::{path::PathBuf, rc::Rc, sync::atomic::{AtomicI32, Ordering}};
 use util::filechooser;
 
 use crate::util::convert::run_convert;
+
+static NEXT_ID: AtomicI32 = AtomicI32::new(0);
+static APP_START: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();
+
+fn now_ms() -> f32 {
+    APP_START
+        .get_or_init(std::time::Instant::now)
+        .elapsed()
+        .as_millis() as f32
+}
 
 fn available_formats(path: &PathBuf) -> Vec<&'static str> {
     let ext = path
@@ -58,6 +68,21 @@ fn main() {
     let toasts_model = Rc::new(VecModel::<ToastMessage>::default());
     app.set_toasts(ModelRc::from(toasts_model.clone()));
 
+    let app_weak = app.as_weak();
+    let toast_timer = Timer::default();
+    toast_timer.start(slint::TimerMode::Repeated, std::time::Duration::from_millis(500), move || {
+        if let Some(app) = app_weak.upgrade() {
+            if let Some(model) = app
+                .get_toasts()
+                .as_any()
+                .downcast_ref::<VecModel<ToastMessage>>()
+            {
+                let now = now_ms();
+
+                retain_toasts(model, |t| now - t.created_at_ms < t.lifetime_ms);
+            }
+        }
+    });
     let files_model_add = files_model.clone();
     app.on_add_file_clicked(move || {
         let files_model = files_model_add.clone();
@@ -91,14 +116,10 @@ fn main() {
     .on_winit_window_event(move |window, event| match event {
         winit::event::WindowEvent::DroppedFile(path) => {
             if !is_supported_format(&path) {
-                toasts_model_drop.push(ToastMessage {
-                    kind: SharedString::from("error"),
-                    title: SharedString::from("Unsupported file"),
-                    message: SharedString::from(format!(
+                toasts_model_drop.push(ToastMessage::new("error", "Unsupported file", format!(
                         "\"{}\" is not a supported format",
                         path.file_name().unwrap_or_default().to_string_lossy()
-                    )),
-                });
+                    ), None));
                 return EventResult::PreventDefault;
             }
             let formats = available_formats(&path);
@@ -115,13 +136,7 @@ fn main() {
             };
             files_model_drop.push(entry);
 
-            toasts_model_drop.push(ToastMessage {
-                kind: SharedString::from("info"),
-                title: SharedString::from("File added"),
-                message: SharedString::from(
-                    path.file_name().unwrap_or_default().to_string_lossy().as_ref(),
-                ),
-            });
+            toasts_model_drop.push(ToastMessage::new("info", "File added", path.file_name().unwrap_or_default().to_string_lossy().as_ref(), None));
 
             EventResult::PreventDefault
         }
@@ -174,6 +189,20 @@ fn main() {
     app.run().unwrap();
 }
 
+impl ToastMessage {
+    fn new(kind: &str, title: &str, message: impl Into<String>, lifetime_ms: impl Into<Option<f32>>) -> Self {
+        let id = NEXT_ID.fetch_add(1, Ordering::Relaxed);
+        let now: f32 = now_ms();
+        ToastMessage { id,
+            kind: SharedString::from(kind.to_string()),
+            title: SharedString::from(title.to_string()),
+            message: SharedString::from(message.into()),
+            created_at_ms: now,
+            lifetime_ms: lifetime_ms.into().unwrap_or(4000.0_f32),
+         }
+    }
+}
+
 fn push_toasts(app: &MainWindow, messages: Vec<Message>) {
     if let Some(model) = app
         .get_toasts()
@@ -187,11 +216,20 @@ fn push_toasts(app: &MainWindow, messages: Vec<Message>) {
                 Message::Warning(text) => ("warning", "Warning", text.to_string()),
                 Message::Info(text) => ("info", "Info", text.to_string()),
             };
-            model.push(ToastMessage {
-                kind: SharedString::from(kind),
-                title: SharedString::from(title),
-                message: SharedString::from(body.as_str()),
-            });
+            model.push(ToastMessage::new(kind, title, body.as_str(), None));
         }
+    }
+}
+
+fn retain_toasts(model: &VecModel<ToastMessage>, keep: impl Fn(&ToastMessage) -> bool) {
+    let to_remove: Vec<usize> = model
+        .iter()
+        .enumerate()
+        .filter(|(_, t)| !keep(t))
+        .map(|(i, _)| i)
+        .collect();
+
+    for i in to_remove.into_iter().rev() {
+        model.remove(i);
     }
 }
