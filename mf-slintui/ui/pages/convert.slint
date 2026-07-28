@@ -1,0 +1,64 @@
+import { Theme } from "../Theme/Theme.slint";
+import { Button } from "../components/button.slint";
+import { FileItemList } from "../components/fileitemlist.slint";
+import { FileEntry } from "../types.slint";
+
+export component ConvertPage inherits Rectangle {
+    callback add_file_clicked();
+    callback convert_clicked();
+    callback format-changed(int, string);
+    callback remove-clicked(int);
+    in-out property <[FileEntry]> files: [];
+    pure callback on_dropped_file(data-transfer);
+
+    background: Theme.surface;
+    horizontal-stretch: 1;
+    vertical-stretch: 1;
+
+    VerticalLayout {
+        // File list
+        Rectangle {
+            padding-left: 16px;
+            padding-right: 16px;
+            padding-top: 8px;
+            background: Theme.surface;
+            horizontal-stretch: 1;
+            vertical-stretch: 1;
+
+            FileItemList {
+                files: files;
+                format-changed(i, fmt) => { root.format-changed(i, fmt); }
+                remove-clicked(i) => { root.remove-clicked(i) }
+            }
+        }
+   
+
+        // Action bar
+        Rectangle {
+            background: Theme.bg_light;
+            horizontal-stretch: 1;
+            height: 56px;
+
+            VerticalLayout {
+                Rectangle { vertical-stretch: 1; }
+                HorizontalLayout {
+                    padding-left: 20px;
+                    padding-right: 20px;
+
+                    Button {
+                        label: "Add Files";
+                        clicked => { root.add_file_clicked() }
+                    }
+
+                    Rectangle { horizontal-stretch: 1; }
+
+                    Button {
+                        label: "Convert";
+                        clicked => { root.convert_clicked() }
+                    }
+                }
+                Rectangle { vertical-stretch: 1; }
+            }
+        }
+    }
+}

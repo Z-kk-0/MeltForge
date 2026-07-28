@@ -1,0 +1,15 @@
+export struct FileEntry {
+    path: string,
+    selected-format: string,
+    available-formats: [string],
+    is-image: bool,
+    image: image,
+}
+
+export struct ToastMessage {
+    id: int,
+    kind: string,
+    title: string,
+    message: string,
+    lifetime_ms: float
+}

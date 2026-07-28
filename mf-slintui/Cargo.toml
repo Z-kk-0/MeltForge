@@ -1,0 +1,15 @@
+[package]
+name = "mf-slintui"
+version = "0.1.0"
+edition.workspace = true
+build = "build.rs"
+
+[dependencies]
+slint = { workspace = true }
+mf-core = { path = "../mf-core" }  
+native-dialog = { workspace = true, features = ["async"] }
+i-slint-backend-winit = "1.17.1"
+winit = "0.30.13"
+
+[build-dependencies]
+slint-build = { workspace = true }

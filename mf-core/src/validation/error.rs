@@ -73,6 +73,9 @@ pub enum IoError {
     #[error("write error: {0}")]
     WriteError(PathBuf),
 
+    #[error("not found: {0}")]
+    NotFound(PathBuf),
+
     #[error("permission denied: {0}")]
     PermissionDenied(PathBuf),
 
@@ -97,6 +100,6 @@ pub enum ManifestScanError {
         source: toml::de::Error,
     },
 
-    #[error("Manifest validation error in {path:?}: {msg}")]
-    Invalid { path: PathBuf, msg: String },
+    #[error("Manifest validation error in {path:?}: {message}")]
+    Invalid { path: PathBuf, message: String },
 }

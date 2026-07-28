@@ -1,0 +1,21 @@
+import { Theme } from "../Theme/Theme.slint";
+
+export  component Tooltip inherits Rectangle {
+    in property <string> text;
+    in property <bool> tooltipvisible: false;
+    if root.tooltipvisible: Rectangle {
+        background: Theme.surface;
+        border-radius: Theme.radius;
+        padding: 6px;
+        border-width: 1px;
+        border-color: Theme.divider;
+        drop-shadow-color: black;
+        drop-shadow-offset-x: 1px;
+        drop-shadow-offset-y: 1px;
+        Text {
+            text: root.text;
+            color: Theme.text;
+            font-size: 11px;
+        }
+    }
+}

@@ -1,0 +1,26 @@
+import { Theme } from "../Theme/Theme.slint";
+
+export component NavItem inherits Rectangle {
+    in property <string> label;
+    in property <bool>   selected: false;
+    callback clicked();
+
+    height: 40px;
+    horizontal-stretch: 1;
+    background: selected ? Theme.surface
+                        : (is_hovered ? Theme.charcoal_light : transparent);
+    border-radius: Theme.radius;
+    hover_area := TouchArea {
+        clicked() => { root.clicked() }
+    }
+    private property <bool> is_hovered <=> hover_area.has-hover;
+
+    Text {
+        text: root.label;
+        font-size: 16px;
+        color: selected ? Theme.text : Theme.text;
+        vertical-alignment: center;
+        x: 16px;
+        opacity: selected ? 1.0 : 0.9;
+    }
+}

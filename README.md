@@ -255,3 +255,42 @@ pub fn convert(cj: ConvertJob) -> Result<PathBuf, MeltforgeError> {
 ```
 so basically, a function that takes a list of ConvertJobs and converts them each step by step. Maybe it is possible to multithread this so it converts faster
 then the cli will need the capabilities to accept and read wildcards correctly. This will all be in the CLI itself and not in the core so we can seperate concerns. The core should still be flexible and as lightweight as possible.
+
+
+## #5 User Story
+The most important thing would be a area where you can dnd files into and where you can click on the area where you can select your files via the Users desired file manager. If you drop it in you also need an option to set the conversion output and the output path.
+
+### Ui Coloring
+its about time for the coloring aspect
+
+background: Charcoal #36454f
+primary:  Orange: #F66907
+secondary: lava: #cf1020
+
+#### Neutrals
+
+| Role                         | Color     | Use                                                    |
+| ---------------------------- | --------- | ------------------------------------------------------ |
+| Background (lighter section) | `#2C353C` | Sidebars, modals, subtle contrast from main background |
+| Surface / Card               | `#404E57` | Panel backgrounds, hover states                        |
+| Divider / Border             | `#5A6A74` | Lines, outlines, separators                            |
+| Text Primary                 | `#EAEAEA` | Main text on dark backgrounds                          |
+| Text Secondary               | `#B8C2C8` | Captions, labels, disabled text                        |
+
+#### Accent and Utility Colors
+
+| Purpose | Color                | Description                                    |
+| ------- | -------------------- | ---------------------------------------------- |
+| Success | `#27AE60`            | Subtle green to pop against dark UI            |
+| Warning | `#F2C037`            | Warm gold fits naturally beside the orange     |
+| Info    | `#3498DB`            | Cooler tone for neutral hints, tooltips, links |
+| Error   | use `#CF1020` (lava) | Already perfect – intense, decisive red        |
+
+#### Highlight and Depth
+
+| Variant        | Color     | Use                                 |
+| -------------- | --------- | ----------------------------------- |
+| Orange Light   | `#FF8C33` | Hover or focus of primary buttons   |
+| Orange Dark    | `#C35605` | Active or pressed states            |
+| Lava Dark      | `#A00E1A` | Hover state for destructive actions |
+| Charcoal Light | `#4A5A64` | Hover for dark panels               |

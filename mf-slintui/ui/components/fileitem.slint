@@ -1,0 +1,85 @@
+import { ComboBox } from "std-widgets.slint";
+import { Theme } from "../Theme/Theme.slint";
+import { FileEntry } from "../types.slint";
+import { Button } from "button.slint";
+
+export component FileItem inherits Rectangle {
+    border-radius: Theme.radius;
+    background: Theme.bg_light;
+    border-width: 1px;
+    border-color: Theme.divider;
+    clip: true;
+
+    in-out property <FileEntry> entry;
+    callback remove-clicked(); 
+    callback format-changed(string);
+
+    VerticalLayout {
+        spacing: 0px;
+        // Image preview area square based on card width
+        Rectangle {
+            height: root.width;
+            background: Theme.surface;
+
+            Image {
+                source: entry.is-image ? entry.image : @image-url("../icons/image-square-svgrepo-com.svg");
+                image-fit: contain;
+                width: entry.is-image ? parent.width : parent.width * 0.45;
+                height: entry.is-image ? parent.height : parent.width * 0.45;
+                x: (parent.width - self.width) / 2;
+                y: (parent.height - self.height) / 2;
+                colorize: entry.is-image ? transparent : Theme.divider;
+            }
+        }
+
+        // Divider
+        Rectangle { height: 1px; background: Theme.divider; }
+
+        // Filename
+        Rectangle {
+            height: 30px;
+            Text {
+                x: 8px;
+                width: parent.width - 16px;
+                text: entry.path;
+                font-size: 11px;
+                color: Theme.text_muted;
+                overflow: elide;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+            }
+        }
+
+        // Divider
+        Rectangle { height: 1px; background: Theme.divider; }
+
+        
+        Rectangle {
+            VerticalLayout {
+                spacing: 5px;
+                padding-top: 5px;
+                // Format selector
+                ComboBox {
+                    x: 8px;
+
+                    width: parent.width - 16px;
+                    height: 32px;
+                    model: entry.available-formats;
+                    current-value: entry.selected-format;
+                    selected(v) => { root.format-changed(v); }
+                }
+
+                // Delete Button
+                Button {
+                    x: 8px;
+                    width: parent.width - 16px;
+                    height: 32px;
+                    color-variant: error;
+                    label: "Remove";
+                    clicked => { remove-clicked() }
+                }
+            }
+        }
+        
+    }
+}

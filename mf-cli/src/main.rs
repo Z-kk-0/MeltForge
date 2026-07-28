@@ -14,9 +14,9 @@ fn main() -> Result<(), MeltforgeError> {
     let cli = cli::Cli::parse();
     let exit_code = match dispatch_command(cli) {
         Ok(code) => code,
-        Err(e) => {
-            eprintln!("Error: {}", e);
-            e.exit_code() as i32
+        Err(error) => {
+            eprintln!("Error: {}", error);
+            error.exit_code() as i32
         }
     };
     exit(exit_code);

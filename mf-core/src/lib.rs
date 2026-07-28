@@ -1,7 +1,9 @@
 pub mod convert;
 pub mod format;
 pub mod job;
+pub mod message;
 pub mod plugin;
+pub mod runner;
 pub mod validation;
 
 pub fn add(left: u64, right: u64) -> u64 {

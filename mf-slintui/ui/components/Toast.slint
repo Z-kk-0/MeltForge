@@ -1,0 +1,130 @@
+import { Theme } from "../Theme/Theme.slint";
+import { ToastMessage } from "../types.slint";
+
+export component Toast inherits Rectangle {
+    in property <ToastMessage> toast;
+    callback dismissed();
+
+    property <bool> dismissing: false;
+
+    life-timer := Timer {
+        interval: root.toast.lifetime-ms * 1ms;
+        running: true;
+        triggered => { root.dismissing = true; }
+    }
+
+    fade-timer := Timer {
+        interval: 200ms;
+        running: root.dismissing;
+        triggered => { root.dismissed(); }
+    }
+
+    height: 68px;
+    border-radius: Theme.radius;
+    clip: true;
+    background: Theme.bg_light;
+
+    states [
+        dismissing when root.dismissing: {
+            opacity: 0;
+        }
+    ]
+    animate opacity { duration: 200ms; easing: ease-in; }
+
+    property <color> accent-color:
+        toast.kind == "success" ? Theme.success
+        : toast.kind == "error" ? Theme.error
+        : toast.kind == "warning" ? Theme.warning
+        : Theme.info;
+
+    property <string> icon-char:
+        toast.kind == "success" ? "✓"
+        : toast.kind == "error" ? "✕"
+        : toast.kind == "warning" ? "!"
+        : "i";
+
+    // Icon area background tint
+    Rectangle {
+        x: 0;
+        y: 0;
+        width: 48px;
+        height: parent.height;
+        background: accent-color.with-alpha(0.15);
+    }
+
+    // Left accent border
+    Rectangle {
+        x: 0;
+        y: 0;
+        width: 4px;
+        height: parent.height;
+        background: accent-color;
+    }
+
+    // Icon circle
+    Rectangle {
+        x: 12px;
+        y: (parent.height - self.height) / 2;
+        width: 24px;
+        height: 24px;
+        border-radius: 12px;
+        border-width: 1.5px;
+        border-color: accent-color;
+        background: transparent;
+
+        Text {
+            width: 100%;
+            height: 100%;
+            text: icon-char;
+            color: accent-color;
+            font-size: 12px;
+            font-weight: 700;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+
+    // Title + message
+    VerticalLayout {
+        x: 56px;
+        y: 0;
+        width: parent.width - 56px - 36px;
+        height: parent.height;
+        alignment: center;
+        spacing: 2px;
+
+        Text {
+            text: toast.title;
+            color: Theme.text;
+            font-size: 13px;
+            font-weight: 700;
+            overflow: elide;
+        }
+
+        Text {
+            text: toast.message;
+            color: Theme.text_muted;
+            font-size: 11px;
+            overflow: elide;
+        }
+    }
+
+    // Close button
+    close-area := TouchArea {
+        x: parent.width - 36px;
+        y: 0;
+        width: 36px;
+        height: parent.height;
+        clicked => { root.dismissing = true; }
+
+        Text {
+            width: 100%;
+            height: 100%;
+            text: "×";
+            color: close-area.has-hover ? Theme.text : Theme.text_muted;
+            font-size: 18px;
+            horizontal-alignment: center;
+            vertical-alignment: center;
+        }
+    }
+}

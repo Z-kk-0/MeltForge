@@ -1,0 +1,62 @@
+import { Theme } from "Theme/Theme.slint";
+import { Sidebar } from "components/SideBar.slint";
+import { PluginsPage } from "pages/plugins.slint";
+import { ConvertPage } from "pages/convert.slint";
+import { Toast } from "components/Toast.slint";
+import { FileEntry, ToastMessage } from "types.slint";
+
+export component MainWindow inherits Window {
+    callback add_file_clicked;
+    callback convert_clicked();
+    callback format-changed(int, string);
+    callback dismiss-toast(int);
+    callback remove-clicked(int);
+
+    min-width: 960px;
+    min-height: 600px;
+    vertical-stretch: 1;
+    horizontal-stretch: 1;
+    background: Theme.bg;
+    title: "Meltforge";
+    in property <string> app_version: "";
+    in-out property <[FileEntry]> files: [];
+    in-out property <[ToastMessage]> toasts: [];
+    property <int> current_page: 0;
+
+    HorizontalLayout {
+        Sidebar {
+            app_version: root.app_version;
+            clip: false;
+            current: root.current_page;
+            select(i) => { root.current_page = i; }
+        }
+
+        if root.current_page == 0: ConvertPage {
+            add_file_clicked => { root.add_file_clicked(); }
+            files: root.files;
+            format-changed(i, fmt) => { root.format-changed(i, fmt); }
+            convert_clicked => { root.convert_clicked() }
+            remove-clicked(i) => { root.remove-clicked(i) }
+        }
+        if root.current_page == 1: PluginsPage { }
+    }
+
+    // Toast overlay
+    Rectangle {
+        x: root.width - 416px;
+        y: 16px;
+        width: 400px;
+        height: root.height - 32px;
+        background: transparent;
+
+        VerticalLayout {
+            alignment: start;
+            spacing: Theme.gap;
+
+            for toast[i] in root.toasts: Toast {
+                toast: toast;
+                dismissed => { root.dismiss-toast(i); }
+            }
+        }
+    }
+}
