@@ -5,10 +5,11 @@ export component FileItemList inherits Rectangle {
     background: transparent;
     in-out property <[FileEntry]> files;
     callback format-changed(int, string);
+    callback remove-clicked(int);
 
     private property <length> gap: 8px;
     private property <length> card-w: 160px;
-    private property <length> card-h: card-w + 74px;
+    private property <length> card-h: card-w + 115px;
     private property <float> cols: Math.max(1, Math.floor((root.width - gap) / (card-w + gap)));
 
     Flickable {
@@ -24,6 +25,8 @@ export component FileItemList inherits Rectangle {
             height: card-h;
             entry: entry;
             format-changed(fmt) => { root.format-changed(i, fmt); }
+            remove-clicked => { root.remove-clicked(i); }
+
         }
     }
 }

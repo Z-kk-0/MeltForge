@@ -1,6 +1,7 @@
 import { ComboBox } from "std-widgets.slint";
 import { Theme } from "../Theme/Theme.slint";
 import { FileEntry } from "../types.slint";
+import { Button } from "button.slint";
 
 export component FileItem inherits Rectangle {
     border-radius: Theme.radius;
@@ -10,11 +11,11 @@ export component FileItem inherits Rectangle {
     clip: true;
 
     in-out property <FileEntry> entry;
+    callback remove-clicked(); 
     callback format-changed(string);
 
     VerticalLayout {
         spacing: 0px;
-
         // Image preview area square based on card width
         Rectangle {
             height: root.width;
@@ -52,18 +53,33 @@ export component FileItem inherits Rectangle {
         // Divider
         Rectangle { height: 1px; background: Theme.divider; }
 
-        // Format selector
+        
         Rectangle {
-            height: 42px;
-            ComboBox {
-                x: 8px;
-                y: 5px;
-                width: parent.width - 16px;
-                height: 32px;
-                model: entry.available-formats;
-                current-value: entry.selected-format;
-                selected(v) => { root.format-changed(v); }
+            VerticalLayout {
+                spacing: 5px;
+                padding-top: 5px;
+                // Format selector
+                ComboBox {
+                    x: 8px;
+
+                    width: parent.width - 16px;
+                    height: 32px;
+                    model: entry.available-formats;
+                    current-value: entry.selected-format;
+                    selected(v) => { root.format-changed(v); }
+                }
+
+                // Delete Button
+                Button {
+                    x: 8px;
+                    width: parent.width - 16px;
+                    height: 32px;
+                    color-variant: error;
+                    label: "Remove";
+                    clicked => { remove-clicked() }
+                }
             }
         }
+        
     }
 }

@@ -1,5 +1,5 @@
 import { Theme } from "../Theme/Theme.slint";
-import { ButtonPrimary } from "../components/buttonprimary.slint";
+import { Button } from "../components/button.slint";
 import { FileItemList } from "../components/fileitemlist.slint";
 import { FileEntry } from "../types.slint";
 
@@ -7,6 +7,7 @@ export component ConvertPage inherits Rectangle {
     callback add_file_clicked();
     callback convert_clicked();
     callback format-changed(int, string);
+    callback remove-clicked(int);
     in-out property <[FileEntry]> files: [];
     pure callback on_dropped_file(data-transfer);
 
@@ -27,6 +28,7 @@ export component ConvertPage inherits Rectangle {
             FileItemList {
                 files: files;
                 format-changed(i, fmt) => { root.format-changed(i, fmt); }
+                remove-clicked(i) => { root.remove-clicked(i) }
             }
         }
    
@@ -43,14 +45,14 @@ export component ConvertPage inherits Rectangle {
                     padding-left: 20px;
                     padding-right: 20px;
 
-                    ButtonPrimary {
+                    Button {
                         label: "Add Files";
                         clicked => { root.add_file_clicked() }
                     }
 
                     Rectangle { horizontal-stretch: 1; }
 
-                    ButtonPrimary {
+                    Button {
                         label: "Convert";
                         clicked => { root.convert_clicked() }
                     }

@@ -1,5 +1,5 @@
 slint::include_modules!();
-use slint::{Model, Timer, language::AccessibleRole::Main, platform::WindowEvent};
+use slint::{Model, language::AccessibleRole::Main, platform::WindowEvent};
 use i_slint_backend_winit::{EventResult, WinitWindowAccessor};
 mod util;
 use mf_core::{format::FormatType, job::ConvertJob, message::Message};
@@ -10,14 +10,6 @@ use util::filechooser;
 use crate::util::convert::run_convert;
 
 static NEXT_ID: AtomicI32 = AtomicI32::new(0);
-static APP_START: std::sync::OnceLock<std::time::Instant> = std::sync::OnceLock::new();
-
-fn now_ms() -> f32 {
-    APP_START
-        .get_or_init(std::time::Instant::now)
-        .elapsed()
-        .as_millis() as f32
-}
 
 fn available_formats(path: &PathBuf) -> Vec<&'static str> {
     let ext = path
@@ -67,22 +59,9 @@ fn main() {
 
     let toasts_model = Rc::new(VecModel::<ToastMessage>::default());
     app.set_toasts(ModelRc::from(toasts_model.clone()));
-
-    let app_weak = app.as_weak();
-    let toast_timer = Timer::default();
-    toast_timer.start(slint::TimerMode::Repeated, std::time::Duration::from_millis(500), move || {
-        if let Some(app) = app_weak.upgrade() {
-            if let Some(model) = app
-                .get_toasts()
-                .as_any()
-                .downcast_ref::<VecModel<ToastMessage>>()
-            {
-                let now = now_ms();
-
-                retain_toasts(model, |t| now - t.created_at_ms < t.lifetime_ms);
-            }
-        }
-    });
+    
+    
+    // Add Files
     let files_model_add = files_model.clone();
     app.on_add_file_clicked(move || {
         let files_model = files_model_add.clone();
@@ -110,6 +89,7 @@ fn main() {
         })
         .unwrap();
     });
+
     let files_model_drop = files_model.clone();
     let toasts_model_drop = toasts_model.clone();
     app.window()
@@ -143,6 +123,7 @@ fn main() {
         _ => EventResult::Propagate,
     });
 
+    // change format
     let files_model_fmt = files_model.clone();
     app.on_format_changed(move |index, format| {
         if let Some(mut entry) = files_model_fmt.row_data(index as usize) {
@@ -151,11 +132,22 @@ fn main() {
         }
     });
 
+
+    // remove file
+    let files_model_remove = files_model.clone();
+    let toasts_model_remove = toasts_model.clone();
+    app.on_remove_clicked(move |index| {
+            files_model_remove.remove(index as usize);
+            toasts_model_remove.push(ToastMessage::new("success", "Removed", "File Removed successfully", None));
+    });    
+
+    // dismiss toasts
     let toasts_model_dismiss = toasts_model.clone();
     app.on_dismiss_toast(move |index| {
         toasts_model_dismiss.remove(index as usize);
     });
 
+    // Convert 
     let app_weak = app.as_weak();
     app.on_convert_clicked(move || {
         let app = app_weak.unwrap();
@@ -192,17 +184,15 @@ fn main() {
 impl ToastMessage {
     fn new(kind: &str, title: &str, message: impl Into<String>, lifetime_ms: impl Into<Option<f32>>) -> Self {
         let id = NEXT_ID.fetch_add(1, Ordering::Relaxed);
-        let now: f32 = now_ms();
         ToastMessage { id,
             kind: SharedString::from(kind.to_string()),
             title: SharedString::from(title.to_string()),
             message: SharedString::from(message.into()),
-            created_at_ms: now,
             lifetime_ms: lifetime_ms.into().unwrap_or(4000.0_f32),
          }
     }
 }
-
+// Show Toasts
 fn push_toasts(app: &MainWindow, messages: Vec<Message>) {
     if let Some(model) = app
         .get_toasts()
@@ -218,18 +208,5 @@ fn push_toasts(app: &MainWindow, messages: Vec<Message>) {
             };
             model.push(ToastMessage::new(kind, title, body.as_str(), None));
         }
-    }
-}
-
-fn retain_toasts(model: &VecModel<ToastMessage>, keep: impl Fn(&ToastMessage) -> bool) {
-    let to_remove: Vec<usize> = model
-        .iter()
-        .enumerate()
-        .filter(|(_, t)| !keep(t))
-        .map(|(i, _)| i)
-        .collect();
-
-    for i in to_remove.into_iter().rev() {
-        model.remove(i);
     }
 }

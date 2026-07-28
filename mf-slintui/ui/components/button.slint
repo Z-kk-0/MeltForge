@@ -1,11 +1,12 @@
-import { Theme } from "../Theme/Theme.slint";
+import { Theme, ButtonColor } from "../Theme/Theme.slint";
 
-export component ButtonPrimary inherits Rectangle {
+export component Button inherits Rectangle {
     in property <string> label;
+    in property <ButtonColor> color-variant: ButtonColor.primary;
     callback clicked();
     height: 36px;
     min-width: 96px;
-    background: is_pressed ? Theme.primary_dark : (is_hovered ? Theme.primary_light : Theme.primary);
+    background: is_pressed ? base_color.darker(30%) : (is_hovered ? base_color.brighter(20%) : base_color);
     border-radius: Theme.radius;
     ta := TouchArea {
         clicked() => {
@@ -13,6 +14,7 @@ export component ButtonPrimary inherits Rectangle {
         }
     }
 
+    private property <color> base_color: Theme.button-color(root.color-variant);
     private property <bool> is_hovered <=> ta.has-hover;
     private property <bool> is_pressed <=> ta.pressed;
     Text {

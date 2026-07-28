@@ -5,10 +5,31 @@ export component Toast inherits Rectangle {
     in property <ToastMessage> toast;
     callback dismissed();
 
+    property <bool> dismissing: false;
+
+    life-timer := Timer {
+        interval: root.toast.lifetime-ms * 1ms;
+        running: true;
+        triggered => { root.dismissing = true; }
+    }
+
+    fade-timer := Timer {
+        interval: 200ms;
+        running: root.dismissing;
+        triggered => { root.dismissed(); }
+    }
+
     height: 68px;
     border-radius: Theme.radius;
     clip: true;
     background: Theme.bg_light;
+
+    states [
+        dismissing when root.dismissing: {
+            opacity: 0;
+        }
+    ]
+    animate opacity { duration: 200ms; easing: ease-in; }
 
     property <color> accent-color:
         toast.kind == "success" ? Theme.success
@@ -94,7 +115,7 @@ export component Toast inherits Rectangle {
         y: 0;
         width: 36px;
         height: parent.height;
-        clicked => { dismissed(); }
+        clicked => { root.dismissing = true; }
 
         Text {
             width: 100%;

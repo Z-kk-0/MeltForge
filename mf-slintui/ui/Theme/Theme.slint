@@ -1,15 +1,25 @@
+export enum ButtonColor {
+    primary,
+    secondary,
+    success,
+    warning,
+    info,
+    error,
+    bg,
+}
+
 export global Theme {
     // Base
-    in property <color> bg                : #36454f;   
-    in property <color> primary           : #F66907;   
-    in property <color> secondary         : #cf1020;   
+    in property <color> bg                : #36454f;
+    in property <color> primary           : #F66907;
+    in property <color> secondary         : #cf1020;
 
     // Neutrals
-    in property <color> bg_light          : #2C353C;   
-    in property <color> surface           : #404E57;   
-    in property <color> divider           : #5A6A74;   
-    in property <color> text              : #EAEAEA;    
-    in property <color> text_muted        : #B8C2C8;  
+    in property <color> bg_light          : #2C353C;
+    in property <color> surface           : #404E57;
+    in property <color> divider           : #5A6A74;
+    in property <color> text              : #EAEAEA;
+    in property <color> text_muted        : #B8C2C8;
 
     // Accents / Utility
     in property <color> success           : #27AE60;
@@ -18,13 +28,23 @@ export global Theme {
     in property <color> error             : #cf1020;
 
     // Variants
-    in property <color> primary_light     : #FF8C33;   
-    in property <color> primary_dark      : #C35605;  
-    in property <color> lava_dark         : #A00E1A;   
-    in property <color> charcoal_light    : #4A5A64;  
+    in property <color> primary_light     : #FF8C33;
+    in property <color> primary_dark      : #C35605;
+    in property <color> lava_dark         : #A00E1A;
+    in property <color> charcoal_light    : #4A5A64;
 
     // Shared metrics
     in property <length> radius           : 8px;
     in property <length> gap              : 8px;
     in property <length> pad              : 12px;
+
+    public pure function button-color(variant: ButtonColor) -> color {
+        if (variant == ButtonColor.secondary) { return secondary; }
+        if (variant == ButtonColor.success) { return success; }
+        if (variant == ButtonColor.warning) { return warning; }
+        if (variant == ButtonColor.info) { return info; }
+        if (variant == ButtonColor.error) { return error; }
+        if (variant == ButtonColor.bg) { return bg; }
+        return primary;
+    }
 }

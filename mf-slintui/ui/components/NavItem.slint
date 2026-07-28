@@ -1,6 +1,6 @@
 import { Theme } from "../Theme/Theme.slint";
 
-component NavItem inherits Rectangle {
+export component NavItem inherits Rectangle {
     in property <string> label;
     in property <bool>   selected: false;
     callback clicked();
