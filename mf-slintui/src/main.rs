@@ -63,11 +63,20 @@ fn main() {
     
     // Add Files
     let files_model_add = files_model.clone();
+    let toasts_model_add = toasts_model.clone();
     app.on_add_file_clicked(move || {
         let files_model = files_model_add.clone();
+        let toasts_model = toasts_model_add.clone();
         slint::spawn_local(async move {
             if let Ok(Some(input_files)) = filechooser::open_dialog().await {
                 for path in input_files {
+                    if !is_supported_format(&path) {
+                        toasts_model.push(ToastMessage::new("error", "Unsupported file", format!(
+                                "\"{}\" is not a supported format",
+                                path.file_name().unwrap_or_default().to_string_lossy()
+                            ), None));
+                        continue;
+                    }
                     let formats = available_formats(&path);
                     let default_format = formats.first().copied().unwrap_or("JPG");
                     let (is_image, image) = load_thumbnail(&path);
@@ -174,7 +183,15 @@ fn main() {
                 })
                 .unwrap();
             }
-            Err(error) => eprintln!("[error] {}", error),
+            Err(error) => {
+                eprintln!("[error] {}", error);
+                slint::invoke_from_event_loop(move || {
+                    if let Some(app) = handle.upgrade() {
+                        push_toasts(&app, vec![Message::Error(error.to_string())]);
+                    }
+                })
+                .unwrap();
+            }
         });
     });
 
@@ -200,6 +217,11 @@ fn push_toasts(app: &MainWindow, messages: Vec<Message>) {
         .downcast_ref::<VecModel<ToastMessage>>()
     {
         for msg in messages {
+            if let Message::Info(text) = &msg {
+                if text.starts_with("Converting: ") {
+                    continue;
+                }
+            }
             let (kind, title, body) = match msg {
                 Message::Success(text) => ("success", "Conversion complete", text.to_string()),
                 Message::Error(text) => ("error", "Conversion failed", text.to_string()),

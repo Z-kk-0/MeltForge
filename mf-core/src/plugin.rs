@@ -37,6 +37,7 @@ pub fn scan_plugins(
                 messages.push(Message::Warning(format!(
                     "Failed to read directory entry: {error}"
                 )));
+                errors.push(ManifestScanError::Io(error));
                 continue;
             }
         };

@@ -68,7 +68,10 @@ fn validate_output_dir(output_path: &Path) -> Result<(), IoError> {
         return Err(IoError::AlreadyExists(output_path.to_path_buf()).into());
     }
     // defaulting to used directory for user-friendly experience
-    let parent_dir = output_path.parent().unwrap_or(Path::new("."));
+    let parent_dir = match output_path.parent() {
+        Some(parent) if !parent.as_os_str().is_empty() => parent,
+        _ => Path::new("."),
+    };
 
     if !parent_dir.exists() {
         return Err(IoError::MissingParent(output_path.to_path_buf()));

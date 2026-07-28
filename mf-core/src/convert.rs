@@ -20,7 +20,11 @@ pub fn convert(job: ConvertJob) -> Result<PathBuf, MeltforgeError> {
         .clone()
         .unwrap_or_else(|| derive_output_path(&job.input, job.format_type));
 
-    if let Some(parent) = output_path.parent() {
+    let parent = match output_path.parent() {
+        Some(parent) if !parent.as_os_str().is_empty() => Some(parent),
+        _ => None,
+    };
+    if let Some(parent) = parent {
         if !parent.exists() {
             fs::create_dir_all(parent)
                 .map_err(|io_error| map_io_write(io_error, parent.to_path_buf()))?;
