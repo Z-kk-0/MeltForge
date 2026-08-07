@@ -284,7 +284,7 @@ secondary: lava: #cf1020
 | Success | `#27AE60`            | Subtle green to pop against dark UI            |
 | Warning | `#F2C037`            | Warm gold fits naturally beside the orange     |
 | Info    | `#3498DB`            | Cooler tone for neutral hints, tooltips, links |
-| Error   | use `#CF1020` (lava) | Already perfect – intense, decisive red        |
+| Error   |  `#CF1020` (lava) | Already perfect intense, decisive red        |
 
 #### Highlight and Depth
 
@@ -294,3 +294,40 @@ secondary: lava: #cf1020
 | Orange Dark    | `#C35605` | Active or pressed states            |
 | Lava Dark      | `#A00E1A` | Hover state for destructive actions |
 | Charcoal Light | `#4A5A64` | Hover for dark panels               |
+
+# #7 User Story
+
+## Settings Architecture
+MeltForge Core stays deliberately minimal in terms of settings. It only needs generic ones like the default output path.
+
+The actual format-specific settings like codec, bitrate, metadata handling etc. will live in the plugins since only the plugin knows what's relevant for its format.
+
+For the Core/UI/CLI to still render and process these plugin-defined settings generically, without hardcoding it per plugin, all plugin settings need to fit into a small, shared set of value types. In practice, ~95% of conceivable settings fit into:
+
+- Boolean (e.g. keep metadata)
+- Enum (e.g. codec choice)
+- Numeric Range (e.g. bitrate)
+- Numeric Field with unit (e.g. resolution)
+- Path (e.g. save folder)
+- Key-Value List (e.g. per-field metadata keep/delete)
+- Sub-Setting / conditional group (e.g. H.265 exposes different 
+  options than H.264)
+
+This means the Plugin SDK exposes a `SettingSchema` using 
+these types, and Core/CLI/UI only need one generic renderer/parser 
+per type, instead of custom logic for every format.
+markdown
+
+### Known Limitations of the Value-Type System
+
+The 7 value types cover the vast majority of plugin settings. 
+Deliberately NOT covered (for now):
+
+- Raw/Expert input (unstructured, unvalidated string escape hatch)
+- File references (a setting whose value is itself a file to be read)
+- Structured/multi-field values (e.g. crop region x/y/w/h)
+- Dynamic enums (options resolved at runtime from the input file)
+- Cross-setting validation (rules spanning multiple settings)
+
+These may be added later, but are 
+out of scope for the initial Settings schema to keep the Core simple.

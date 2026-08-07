@@ -20,6 +20,9 @@ pub enum MeltforgeError {
 
     #[error(transparent)]
     ManifestScanError(#[from] ManifestScanError),
+
+    #[error(transparent)]
+    Settings(#[from] SettingsError),
 }
 
 impl MeltforgeError {
@@ -30,6 +33,7 @@ impl MeltforgeError {
             MeltforgeError::Conversion(_) => 4,
             MeltforgeError::Io(_) => 5,
             MeltforgeError::ManifestScanError(_) => 6,
+            MeltforgeError::Settings(_) => 7,
         }
     }
 }
@@ -102,4 +106,37 @@ pub enum ManifestScanError {
 
     #[error("Manifest validation error in {path:?}: {message}")]
     Invalid { path: PathBuf, message: String },
+
+}
+#[derive(Debug, Error)]
+pub enum SettingsError {
+    #[error("missing settings file: {0}")]
+    MissingSettingsFile(PathBuf),
+
+    #[error("settings directory missing: {0}")]
+    MissingSettingsDir(PathBuf),
+
+    #[error("permission denied: {0}")]
+    PermissionDenied(PathBuf),
+
+    #[error("failed to read settings file: {0}")]
+    ReadError(PathBuf),
+
+    #[error("failed to write settings file: {0}")]
+    WriteError(PathBuf),
+
+    #[error("failed to parse settings file {path:?}: {source}")]
+    TomlParse {
+        path: PathBuf,
+        source: toml::de::Error,
+    },
+
+    #[error("failed to serialize settings: {0}")]
+    TomlSerialize(#[from] toml::ser::Error),
+
+    #[error("unknown setting key: {0}")]
+    UnknownKey(String),
+
+    #[error("invalid value for setting {key}: {message}")]
+    InvalidValue { key: String, message: String },
 }
