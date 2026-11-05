@@ -190,107 +190,30 @@ It’s designed to be **lightweight by default** and **extendible on demand**:
 
 # Planning
 
-## #1 User Story – CLI Conversion
+## Thinking Process
+### Core
+The goal of the Core can be split into two parts: The Conversion process and the Plugins that are needed for the conversions. It should not have any ui features only pure functionality.
+### Convert
+gets the file and what File Type it should have at the end after that the Conversion validates it before converting it and then uses the needed plugin of the File Type it processes the request and returns the file with the desired file type in the desired path.  There are some problems i already see. 
+#### Problems
+- 3 plugins convert png to jpg which one is used? 
+- how do we guarantee a good dev experience for the File types? They can't be an enum because plugins are using them. unless we are limiting the file types of which i know. This would be a unecessary limitation.
+### Plugins
+It needs a directory with all available plugins. The plugin itself should have a toml file that holds the metadata of the plugin like which file types can be converted to another file type they call this Manifest.
+#### Open Questions
+How many types can one plugin convert? one type to another type? or one type to many other types? or many types to one type? Or Many Types to Many Types?. Depending on that the plugins language api has to be written differently 
+What Lang does the Plugins support? I personally want it to support Lua but i definetly want to make it modular enough so multiple languages are possible. Maybe support a simple bin that just gets executed with the exact inputs? I have to get more infos on how to write a Plugin System
+## Core Features
+### Convert
+Parameters:
+- File
+- desired file type
+- Desired plugin?
+- output path
+Converts the file in the desired type and desired path path has a standard output path that can either be configured or 
+### Plugins
+- define supported file types in manifest with excludelist
+- version
+- gets the file itself with file type of the file and the file type of the desired file type
+- then selects the right command for the selected file types and converts them to the desired type.
 
-For the first user story I will set up a Cargo workspace with two crates:
-
-1. **`mf-core`** – a lightweight library that defines the conversion skeleton, core types, validation logic, and the conversion pipeline. Other MeltForge components such as `mf-cli` and future plugins will depend on this library.
-2. **`mf-cli`** – the command-line interface for MeltForge, acting as the initial user-facing entry point.
-
-To verify the setup, a basic conversion from PNG to JPEG will be implemented. This is only a proof of functionality and will later be extracted into a standalone plugin.
-
-### mf-core
-
-The conversion pipeline (for now) follows this sequence:
-
-**Command → Validation → Conversion → Output → Response**
-
-A conversion job is submitted to `mf-core`. The core validates the request (e.g., input file exists, target format is supported). If validation succeeds, the conversion is executed — initially through a built-in routine, and later via the appropriate plugin. The result is then returned as either:
-
-- **Success** – including the output path.
-- **Error** – with a descriptive message.
-
-### mf-cli
-
-The CLI will be released together with the core as the default interface. Later, a Slint-based desktop UI will be available as an optional component.
-
-The CLI is aimed at users familiar with terminal tools. Its usage looks like this:
-
-```bash
-meltforge convert file.jpg --to png
-```
-
-Here `--to` specifies the target format.
-
-## #4 UserStory 
-
-First i have to make it technically possible to convert multiple files in the core itsef because currently it only has
-
-```rust
-pub fn convert(cj: ConvertJob) -> Result<PathBuf, MeltforgeError> {
-    validate_job(&cj)?; // Validate
-
-    let mut output_path = cj
-        .output
-        .clone()
-        .unwrap_or_else(|| derive_output_path(&cj.input, cj.format_type));
-
-    if let Some(parent) = output_path.parent() {
-        if !parent.exists() {
-            fs::create_dir_all(parent).map_err(|e| map_io_write(e, parent.to_path_buf()))?;
-        }
-    }
-    let input_fmt = detect_input_format(&cj.input).map_err(|e| MeltforgeError::from(e))?;
-    match (input_fmt, cj.format_type) {
-        (FormatType::PNG, FormatType::JPEG) => convert_png_jpg(&cj.input, &output_path)?,
-        (FormatType::JPEG, FormatType::PNG) => convert_jpg_png(&cj.input, &output_path)?,
-        _ => {
-            return Err(FormatError::UnsupportedOutput(format!(
-                "{:?} → {:?} not supported yet",
-                input_fmt, cj.format_type
-            ))
-            .into());
-        }
-    } // Convert currently only png  to jpg will later be replaced with the plugin function
-```
-so basically, a function that takes a list of ConvertJobs and converts them each step by step. Maybe it is possible to multithread this so it converts faster
-then the cli will need the capabilities to accept and read wildcards correctly. This will all be in the CLI itself and not in the core so we can seperate concerns. The core should still be flexible and as lightweight as possible.
-
-
-## #5 User Story
-The most important thing would be a area where you can dnd files into and where you can click on the area where you can select your files via the Users desired file manager. If you drop it in you also need an option to set the conversion output and the output path.
-
-### Ui Coloring
-its about time for the coloring aspect
-
-background: Charcoal #36454f
-primary:  Orange: #F66907
-secondary: lava: #cf1020
-
-#### Neutrals
-
-| Role                         | Color     | Use                                                    |
-| ---------------------------- | --------- | ------------------------------------------------------ |
-| Background (lighter section) | `#2C353C` | Sidebars, modals, subtle contrast from main background |
-| Surface / Card               | `#404E57` | Panel backgrounds, hover states                        |
-| Divider / Border             | `#5A6A74` | Lines, outlines, separators                            |
-| Text Primary                 | `#EAEAEA` | Main text on dark backgrounds                          |
-| Text Secondary               | `#B8C2C8` | Captions, labels, disabled text                        |
-
-#### Accent and Utility Colors
-
-| Purpose | Color                | Description                                    |
-| ------- | -------------------- | ---------------------------------------------- |
-| Success | `#27AE60`            | Subtle green to pop against dark UI            |
-| Warning | `#F2C037`            | Warm gold fits naturally beside the orange     |
-| Info    | `#3498DB`            | Cooler tone for neutral hints, tooltips, links |
-| Error   | use `#CF1020` (lava) | Already perfect – intense, decisive red        |
-
-#### Highlight and Depth
-
-| Variant        | Color     | Use                                 |
-| -------------- | --------- | ----------------------------------- |
-| Orange Light   | `#FF8C33` | Hover or focus of primary buttons   |
-| Orange Dark    | `#C35605` | Active or pressed states            |
-| Lava Dark      | `#A00E1A` | Hover state for destructive actions |
-| Charcoal Light | `#4A5A64` | Hover for dark panels               |
