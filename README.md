@@ -217,3 +217,130 @@ Converts the file in the desired type and desired path path has a standard outpu
 - gets the file itself with file type of the file and the file type of the desired file type
 - then selects the right command for the selected file types and converts them to the desired type.
 
+## Plugin Architecture
+
+Meltforge itself does not know how to convert any file format. Every conversion is provided by a **plugin**: a small folder containing a manifest that describes what the plugin can do, and a Lua script that does the actual work. The Rust core is responsible for discovering plugins, choosing the right one for a job, and safely handling files before and after the conversion.
+
+### Overview
+
+```mermaid
+flowchart TB
+    subgraph S1["1. Startup: plugin discovery"]
+        direction LR
+        subgraph PluginsDir["plugins/"]
+            direction TB
+            subgraph P1["image_basic/"]
+                M1["manifest.toml<br/>name · version<br/>inputs · outputs<br/>excludes"]
+                L1["plugin.lua<br/>function jpg(file, target)<br/>function png(file, target)"]
+            end
+            subgraph P2["image_extra/"]
+                M2["manifest.toml"]
+                L2["plugin.lua"]
+            end
+        end
+        Loader["Plugin Loader (Rust)<br/>scans every plugin folder<br/>parses manifest.toml"]
+        Struct["Plugin struct (Rust)<br/>manifest fields<br/>+ path (set by loader,<br/>not in the TOML)"]
+        Registry[("Conversion Registry (Rust)<br/>inputs × outputs − excludes<br/>─────────────<br/>jpg → png: [plugin 1, plugin 2]<br/>jpg → gif: [plugin 2]<br/>png → webp: [plugin 1]")]
+        M1 --> Loader
+        M2 --> Loader
+        Loader --> Struct --> Registry
+    end
+
+    subgraph S2["2. Conversion: photo.jpg → png"]
+        direction LR
+        Job["Convert job (Rust)<br/>file · output type<br/>output path"]
+        Resolver["Plugin Resolver (Rust)<br/>lookup jpg → png"]
+        subgraph Lua["Lua runtime"]
+            direction TB
+            Fn["jpg(file, 'png')<br/>function named<br/>after input type"]
+            Sub["target = png<br/>→ png sub-function"]
+            Fn --> Sub
+        end
+        Validator{"Result<br/>valid?"}
+        Writer["Save to<br/>output path"]
+        Done(["Complete"])
+        Fail(["Error"])
+        Job --> Resolver
+        Resolver -->|"borrowed file"| Fn
+        Sub -->|"converted data"| Validator
+        Validator -->|yes| Writer --> Done
+        Validator -->|no| Fail
+    end
+
+    Registry -->|"matching plugin(s)"| Resolver
+```
+
+### How it works
+
+**1. Plugin structure**
+
+Each plugin lives in its own folder inside `plugins/` and contains two files:
+
+- `manifest.toml` declares the plugin's `name`, `version`, the file types it accepts (`inputs`), the file types it can produce (`outputs`), and any combinations it does not support (`excludes`, e.g. `jpg → gif`).
+- `plugin.lua` contains one Lua function per input type. The function is named after the input file type (`jpg`, `png`, ...) and receives the target format as a parameter.
+
+**2. Discovery at startup**
+
+When Meltforge starts, the plugin loader scans every folder in `plugins/` and parses its `manifest.toml` into a `Plugin` struct. The folder path is not part of the TOML file; the loader adds it to the struct so Meltforge knows where to find the plugin's Lua script later.
+
+**3. Building the registry**
+
+From all loaded plugins, Meltforge builds a conversion registry. For every plugin it combines each input with each output, removes the combinations listed in `excludes`, and records which plugin can handle each pair. The result is a lookup table such as:
+
+```
+jpg → png:  [image_basic, image_extra]
+jpg → gif:  [image_extra]
+png → webp: [image_basic]
+```
+
+Several plugins can offer the same conversion, so each entry holds a list of plugins.
+
+**4. Running a conversion**
+
+A convert job carries three things: the source file, the desired output type, and the output path. The resolver looks up the pair (e.g. `jpg → png`) in the registry and selects a plugin. Meltforge then calls the Lua function named after the source type, `jpg(file, "png")`. Inside that function, the `"png"` parameter tells the plugin which sub-function to use.
+
+Lua only receives a **borrowed** reference to the file. It reads it, converts it, and hands the converted data back to Rust. It never writes to disk itself.
+
+**5. Validation and output**
+
+Back in Rust, Meltforge checks that the conversion succeeded. If it did, the result is written to the requested output path and the job is complete. If not, an error is reported and nothing is written.
+
+### Conversion flow (`jpg → png`)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor U as User
+    participant C as Convert job (Rust)
+    participant R as Registry (Rust)
+    participant L as plugin.lua
+    participant FS as Filesystem
+
+    U->>C: convert(photo.jpg, png, out/photo.png)
+    C->>R: lookup(jpg → png)
+    R-->>C: matching plugin(s)
+    C->>L: jpg(borrowed file, "png")
+    Note over L: jpg() reads the file<br/>and picks the png sub-function<br/>from the target parameter
+    L-->>C: converted data
+    C->>C: validate result
+    alt conversion succeeded
+        C->>FS: write out/photo.png
+        C-->>U: done
+    else conversion failed
+        C-->>U: error
+    end
+```
+
+### Example `manifest.toml`
+
+```toml
+name    = "image_basic"
+version = "1.0.0"
+inputs  = ["jpg", "png"]
+outputs = ["png", "jpg", "gif", "webp"]
+
+# skip specific input → output combinations
+excludes = [
+    { input = "jpg", output = "gif" },
+]
+```

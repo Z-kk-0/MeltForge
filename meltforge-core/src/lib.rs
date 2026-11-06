@@ -2,6 +2,9 @@ pub fn add(left: u64, right: u64) -> u64 {
     left + right
 }
 mod convert;
+mod plugin_reader;
+mod models;
+
 #[cfg(test)]
 mod tests {
     use super::*;
